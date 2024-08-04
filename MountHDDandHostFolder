@@ -1,0 +1,117 @@
+# Forensics VM Setup Guide
+
+This guide provides step-by-step instructions to set up and automate tasks on your Forensics VM.
+
+## Task 1: Mounting the 500 GB Virtual HDD
+
+### Step 1: Verify the Disk in Kali VM
+1. Power on the Kali VM.
+2. Open a terminal and list all attached disks:
+    ```bash
+    sudo fdisk -l
+    ```
+3. Identify the 500 GB disk (e.g., `/dev/sdb`).
+
+### Step 2: Mount the Disk
+1. Create a mount point:
+    ```bash
+    sudo mkdir /mnt/8028HDD
+    ```
+2. Mount the disk:
+    ```bash
+    sudo mount /dev/sdb1 /mnt/8028HDD
+    ```
+3. Verify the mount:
+    ```bash
+    ls /mnt/8028HDD
+    ```
+
+### Step 3: Edit `/etc/fstab` to Automate Mounting
+1. Find the UUID of the partition:
+    ```bash
+    sudo blkid /dev/sdb1
+    ```
+2. Open `/etc/fstab` in a text editor:
+    ```bash
+    sudo nano /etc/fstab
+    ```
+3. Add the following line with the correct UUID:
+    ```plaintext
+    UUID=8564c20c-d8ea-4119-ae19-e762ddc45a5c /mnt/8028HDD ext4 defaults 0 2
+    ```
+4. Save and close the editor.
+5. Remount the filesystem:
+    ```bash
+    sudo mount -a
+    ```
+6. Reboot the VM to verify the changes:
+    ```bash
+    sudo reboot
+    ```
+
+## Task 2: Setting Up Shared Folder to Mount Automatically
+
+### Step 1: Create a Mount Point
+1. Create a directory for the shared folder:
+    ```bash
+    sudo mkdir /mnt/n_drive
+    ```
+
+### Step 2: Edit `/etc/fstab` to Automate Mounting
+1. Open `/etc/fstab` in a text editor:
+    ```bash
+    sudo nano /etc/fstab
+    ```
+2. Add the following line:
+    ```plaintext
+    .host:/8028 /mnt/n_drive fuse.vmhgfs-fuse allow_other,defaults 0 0
+    ```
+3. Save and close the editor.
+4. Remount the filesystem:
+    ```bash
+    sudo mount -a
+    ```
+5. Reboot the VM to verify the changes:
+    ```bash
+    sudo reboot
+    ```
+
+## Automate Commands at Startup
+
+To automate running `update-VM` and `update-wiki` commands at startup, create a systemd service.
+
+### Step 1: Create a systemd Service File
+1. Create the service file:
+    ```bash
+    sudo nano /etc/systemd/system/update-scripts.service
+    ```
+2. Add the following content:
+    ```ini
+    [Unit]
+    Description=Run custom update scripts at startup
+
+    [Service]
+    Type=oneshot
+    ExecStart=/bin/bash -c 'update-VM && update-wiki'
+    RemainAfterExit=true
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+3. Save and close the editor.
+
+### Step 2: Enable and Start the Service
+1. Enable the service to run at startup:
+    ```bash
+    sudo systemctl enable update-scripts.service
+    ```
+2. Start the service to test it:
+    ```bash
+    sudo systemctl start update-scripts.service
+    ```
+3. Check the status of the service:
+    ```bash
+    sudo systemctl status update-scripts.service
+    ```
+
+By following these steps, you can ensure that your 500 GB virtual HDD and shared folder are mounted automatically and your custom commands are run each time the VM starts.
