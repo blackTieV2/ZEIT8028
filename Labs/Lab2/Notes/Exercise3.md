@@ -83,7 +83,7 @@
      Create Time/Date: 2008-06-12 15:13:51
      Last Saved Time/Date: 2008-07-20 01:28:03
      ```
-   [ScreenShot olemeta of m57biz](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-Ex3-FindingXls-SC6.JPG)
+   ![ScreenShot olemeta of m57biz](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-Ex3-FindingXls-SC6.JPG)
 ### Analysis and Findings:
 
 - **Creation Date**:
