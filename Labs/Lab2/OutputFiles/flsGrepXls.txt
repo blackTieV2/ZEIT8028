@@ -1,0 +1,30 @@
+0|/Documents and Settings/Administrator/Templates/excel.xls ($FILE_NAME)|10282-48-5|r/rrwxrwxrwx|0|0|84|1210714210|998568000|1210713850|1210714210
+0|/Documents and Settings/Administrator/Templates/excel.xls|10282-128-4|r/rrwxrwxrwx|0|0|5632|1210714210|998568000|1210714210|1210714210
+0|/Documents and Settings/Administrator/Templates/excel4.xls ($FILE_NAME)|10280-48-5|r/rrwxrwxrwx|0|0|86|1210714210|998568000|1210713850|1210714210
+0|/Documents and Settings/Administrator/Templates/excel4.xls|10280-128-4|r/rrwxrwxrwx|0|0|1518|1210714210|998568000|1210714210|1210714210
+0|/Documents and Settings/Default User/Templates/excel.xls ($FILE_NAME)|5115-48-4|r/rrwxrwxrwx|0|0|84|1210713850|998568000|1210713850|1210713850
+0|/Documents and Settings/Default User/Templates/excel.xls|5115-128-3|r/rrwxrwxrwx|0|0|5632|1210713850|998568000|1210713850|1210713850
+0|/Documents and Settings/Default User/Templates/excel4.xls ($FILE_NAME)|5116-48-4|r/rrwxrwxrwx|0|0|86|1210713850|998568000|1210713850|1210713850
+0|/Documents and Settings/Default User/Templates/excel4.xls|5116-128-3|r/rrwxrwxrwx|0|0|1518|1210713850|998568000|1210713850|1210713850
+0|/Documents and Settings/Devon/Templates/excel.xls ($FILE_NAME)|23982-48-5|r/rrwxrwxrwx|0|0|84|1215831768|998568000|1210713850|1215831768
+0|/Documents and Settings/Devon/Templates/excel.xls|23982-128-4|r/rrwxrwxrwx|0|0|5632|1215831768|998568000|1215831768|1215831768
+0|/Documents and Settings/Devon/Templates/excel4.xls ($FILE_NAME)|23981-48-5|r/rrwxrwxrwx|0|0|86|1215831768|998568000|1210713850|1215831768
+0|/Documents and Settings/Devon/Templates/excel4.xls|23981-128-4|r/rrwxrwxrwx|0|0|1518|1215831768|998568000|1215831768|1215831768
+0|/Documents and Settings/Jean/Desktop/m57biz.xls ($FILE_NAME)|32712-48-4|r/rrwxrwxrwx|0|0|86|1216517283|1216517283|1216517283|1216517283
+0|/Documents and Settings/Jean/Desktop/m57biz.xls|32712-128-3|r/rrwxrwxrwx|0|0|291840|1216517283|1216517283|1216517284|1216517283
+0|/Documents and Settings/Jean/Templates/excel.xls ($FILE_NAME)|16197-48-5|r/rrwxrwxrwx|0|0|84|1215324682|998568000|1210713850|1215324682
+0|/Documents and Settings/Jean/Templates/excel.xls|16197-128-4|r/rrwxrwxrwx|0|0|5632|1215324682|998568000|1215324682|1215324682
+0|/Documents and Settings/Jean/Templates/excel4.xls ($FILE_NAME)|16196-48-5|r/rrwxrwxrwx|0|0|86|1215324682|998568000|1210713850|1215324682
+0|/Documents and Settings/Jean/Templates/excel4.xls|16196-128-4|r/rrwxrwxrwx|0|0|1518|1215324682|998568000|1215324682|1215324682
+0|/Program Files/Microsoft Office/Office/1033/XL8GALRY.XLS ($FILE_NAME)|16488-48-2|r/rrwxrwxrwx|0|0|90|1215328872|1215328872|1215328872|1215328872
+0|/Program Files/Microsoft Office/Office/1033/XL8GALRY.XLS|16488-128-3|r/rrwxrwxrwx|0|0|151552|1215328872|918636138|1215328872|918636138
+0|/Program Files/Microsoft Office/Office/Samples/SAMPLES.XLS ($FILE_NAME)|16928-48-2|r/rrwxrwxrwx|0|0|88|1215328890|1215328890|1215328890|1215328890
+0|/Program Files/Microsoft Office/Office/Samples/SAMPLES.XLS|16928-128-3|r/rrwxrwxrwx|0|0|219648|1215328890|918636120|1215328890|918636120
+0|/Program Files/Microsoft Office/Office/Samples/SOLVSAMP.XLS ($FILE_NAME)|16929-48-2|r/rrwxrwxrwx|0|0|90|1215328890|1215328890|1215328890|1215328890
+0|/Program Files/Microsoft Office/Office/Samples/SOLVSAMP.XLS|16929-128-3|r/rrwxrwxrwx|0|0|159232|1215328890|918636124|1215328890|918636124
+0|/WINDOWS/ShellNew/EXCEL9.XLS ($FILE_NAME)|16911-48-2|r/rrwxrwxrwx|0|0|86|1215328890|1215328890|1215328890|1215328890
+0|/WINDOWS/ShellNew/EXCEL9.XLS|16911-128-3|r/rrwxrwxrwx|0|0|11776|1215328890|918636078|1215328890|918636078
+0|/WINDOWS/system32/config/systemprofile/Templates/excel.xls ($FILE_NAME)|10067-48-5|r/rrwxrwxrwx|0|0|84|1210714171|998568000|1210713850|1210714171
+0|/WINDOWS/system32/config/systemprofile/Templates/excel.xls|10067-128-4|r/rrwxrwxrwx|0|0|5632|1210714171|998568000|1210714172|1210714171
+0|/WINDOWS/system32/config/systemprofile/Templates/excel4.xls ($FILE_NAME)|10065-48-5|r/rrwxrwxrwx|0|0|86|1210714171|998568000|1210713850|1210714171
+0|/WINDOWS/system32/config/systemprofile/Templates/excel4.xls|10065-128-4|r/rrwxrwxrwx|0|0|1518|1210714171|998568000|1210714172|1210714171
