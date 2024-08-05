@@ -72,4 +72,4 @@
 
 - **Findings**:
   - Successfully extracted the NTFS filesystem from the disk image.
-  - SHA1 hash of the extracted filesystem: `f8ec0f
+  - SHA1 hash of the extracted filesystem: `f8ec0f28b54ef1a9d4f3775c1903bc28493a2743`
