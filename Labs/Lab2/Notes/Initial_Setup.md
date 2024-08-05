@@ -14,5 +14,5 @@
 - **Command Used**: `md5sum disk.bin`
 - **Expected MD5**: `78a52b5bac78f4e711607707ac0e3f93`
 - **Result**: `78a52b5bac78f4e711607707ac0e3f93` (Match)
-![Initial Setup Screenshot]()
+![Initial Setup Screenshot](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-Setup-SC1.JPG)
 
