@@ -1,17 +1,5 @@
 # Exercise 4: Finding the Pivot
 
-## Background
-
-You've now reached a critical part of your investigation. You know that Jean possessed the document of concern, and you also know some additional information about the file, including its origin and when it was last updated. However, you're still yet to find how the file was exfiltrated from Jean’s computer. By Jean’s own admission, at least you know that it was exfiltrated.
-
-The aim of this exercise is to find a pivot to your next data point. This pivot is of critical importance to your forensic story and will tie the remainder of your investigation together. To complete this task, take your time to peruse the data on Jean’s computer. In doing so, you’ll build a profile of Jean’s computer usage. What applications are installed? What applications do you think Jean uses? What personal data is stored?
-
-### Hint
-
-Jean's personal files are stored in her user profile: `\Documents and Settings\Jean\My Documents\`, this could be a good place to begin.
-
-## Step-by-Step Instructions
-
 ### Part (a): Dynamic and Static Inspection
 
 1. **Navigate to Jean's Documents Directory**:
