@@ -21,16 +21,34 @@
      ```shell
      grep -iE "\.xls|\.xlsx" Lab2-Ex3-flsRM.txt > flsGrepXls.txt
      ```
-   - This resulted in a list of 30 files. Among them, I identified the following entries:
+   - This resulted in a list of 30 files.
+     [grep output](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/OutputFiles/flsGrepXls.txt)
+   - Among them, I identified the following entries:
      - `/Documents and Settings/Jean/Desktop/m57biz.xls ($FILE_NAME)|32712-48-4|r/rrwxrwxrwx|0|0|86|1216517283|1216517283|1216517283|1216517283`
      - `/Documents and Settings/Jean/Desktop/m57biz.xls|32712-128-3|r/rrwxrwxrwx|0|0|291840|1216517283|1216517283|1216517284|1216517283`
+     - Noting and Documenting the file inode numer
+     - `32712-128-3`
+> ### Importance of the Inode Number:
+> **Unique Identification:**
+> The inode number is a unique identifier for a file within a filesystem. It is used by the filesystem to keep track of the file's attributes and location on the disk. This unique identification is crucial for accurately referencing and retrieving the file during forensic analysis.
+>
+> **File Metadata:**
+> The inode stores important metadata about the file, such as its size, permissions, timestamps (creation, modification, access), and pointers to the data blocks where the file's actual content is stored. This metadata is essential for understanding the file's history and usage.
+>
+> **Consistency Verification:**
+> During forensic analysis, the inode number can be used to verify the consistency and integrity of the file. By cross-referencing the inode information with other filesystem records, investigators can ensure that the file has not been tampered with or altered.
+>
+> **Efficient Access:**
+> Inodes allow for efficient file access and retrieval. Instead of searching the entire filesystem for a file, the inode provides a direct pointer to the file's location, speeding up the analysis process.
+
 
 4. **Extract the File Using `icat`**
    - Extracted the file `m57biz.xls` using the command:
      ```shell
      icat lab2_partition.bin 32712-128-3 > m57biz.xls
      ```
-   - Documented the inode number and the extraction process.
+     [icat output](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/OutputFiles/m57biz.xls)
+  
 
 5. **Verify the File Type Using `hexdump`**
    - Verified the file type using:
