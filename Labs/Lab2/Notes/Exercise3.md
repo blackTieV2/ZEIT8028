@@ -1,6 +1,6 @@
 ### Exercise 3:
 
-#### Part (a): Statically Locate the Sensitive Document
+#### Statically Locate the Sensitive Document
 
 1. **Initial File Listing**
    - Eexecuted the following command to create a comprehensive list of all files in the disk image:
@@ -27,7 +27,7 @@
      - `/Documents and Settings/Jean/Desktop/m57biz.xls ($FILE_NAME)|32712-48-4|r/rrwxrwxrwx|0|0|86|1216517283|1216517283|1216517283|1216517283`
      - `/Documents and Settings/Jean/Desktop/m57biz.xls|32712-128-3|r/rrwxrwxrwx|0|0|291840|1216517283|1216517283|1216517284|1216517283`
      - Noting and Documenting the file inode numer
-     - `32712-128-3`
+     `32712-128-3`
 > ### Importance of the Inode Number:
 > **Unique Identification:**
 > The inode number is a unique identifier for a file within a filesystem. It is used by the filesystem to keep track of the file's attributes and location on the disk. This unique identification is crucial for accurately referencing and retrieving the file during forensic analysis.
@@ -48,14 +48,14 @@
      icat lab2_partition.bin 32712-128-3 > m57biz.xls
      ```
      [icat output](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/OutputFiles/m57biz.xls)
-  
 
-5. **Verify the File Type Using `hexdump`**
+  5. **Verify the File Type Using `hexdump`**
    - Verified the file type using:
      ```shell
      hexdump -C -n 8 m57biz.xls
      ```
    - Confirmed it has the OLECF signature: `d0 cf 11 e0 a1 b1 1a e1`.
+   [hexdump output](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/OutputFiles/Lab2-Ex3-HexDump.txt)
 
 6. **Inspect the File Metadata Using `file`**
    - Used the `file` command:
@@ -83,7 +83,7 @@
      Create Time/Date: 2008-06-12 15:13:51
      Last Saved Time/Date: 2008-07-20 01:28:03
      ```
-
+   [ScreenShot olemeta of m57biz](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-Ex3-FindingXls-SC6.JPG)
 ### Analysis and Findings:
 
 - **Creation Date**:
@@ -94,26 +94,6 @@
 
 - **Authorship**:
   - The document was authored by Alison Smith and last saved by Jean User.
-
-#### Part (b): Verification of File Type
-
-1. **Confirm OLECF File Type**:
-   - Confirmed the file is an OLECF file using `hexdump` and `file`.
-
-2. **Verify Using Hexdump**:
-   - The initial bytes match the OLECF signature, indicating it is a Microsoft Office file.
-
-3. **Inspect Metadata**:
-   - The `file` command provided initial metadata.
-   - The `olemeta` tool provided detailed metadata, confirming the authorship and timestamps.
-
-#### Part (c): Inspection of Metadata with File and Olemeta
-
-1. **Using `file`**:
-   - The `file` command confirmed the type and some metadata details.
-
-2. **Using `olemeta`**:
-   - Extracted detailed metadata showing authorship, creation, and modification dates.
 
 ### Next Steps:
 
