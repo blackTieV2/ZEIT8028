@@ -2,27 +2,45 @@
 
 #### Part (a): Statically Locate the Sensitive Document
 
-1. **Locate the File**
-   - You have identified two instances of `m57biz.xls` in your file search:
+1. **Initial File Listing**
+   - Eexecuted the following command to create a comprehensive list of all files in the disk image:
+     ```shell
+     fls -r -m / /mnt/8028HDD/Module\ 2/Lab\ 2/Lab2Image/Lab\ 2\ -\ Disk\ Forensics/lab2_partition.bin > Lab2-Ex3-flsRM.txt
+     ```
+   - This resulted in a text file of over 10 MB containing 68,522 listed files.
+[Lab2-Ex3-flsRM.txt](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/OutputFiles/Lab2-Ex3-flsRM.txt)
+2. **Search for Excel Files**
+   - Initially, tried to use `grep` to find Excel files:
+     ```shell
+     grep -iE "\.xls$|\.xlsx$" Lab2-Ex3-flsRM.txt
+     ```
+   - This command failed to return any results.
+
+3. **Modified Search Command**
+   - Modified the `grep` command to:
+     ```shell
+     grep -iE "\.xls|\.xlsx" Lab2-Ex3-flsRM.txt > flsGrepXls.txt
+     ```
+   - This resulted in a list of 30 files. Among them, I identified the following entries:
      - `/Documents and Settings/Jean/Desktop/m57biz.xls ($FILE_NAME)|32712-48-4|r/rrwxrwxrwx|0|0|86|1216517283|1216517283|1216517283|1216517283`
      - `/Documents and Settings/Jean/Desktop/m57biz.xls|32712-128-3|r/rrwxrwxrwx|0|0|291840|1216517283|1216517283|1216517284|1216517283`
-   
-2. **Extract the File Using `icat`**
-   - You have already extracted the file `m57biz.xls` using the command:
+
+4. **Extract the File Using `icat`**
+   - Extracted the file `m57biz.xls` using the command:
      ```shell
      icat lab2_partition.bin 32712-128-3 > m57biz.xls
      ```
-   - Ensure you document the inode number and the extraction process in your notes.
+   - Documented the inode number and the extraction process.
 
-3. **Verify the File Type Using `hexdump`**
-   - You verified the file type using:
+5. **Verify the File Type Using `hexdump`**
+   - Verified the file type using:
      ```shell
      hexdump -C -n 8 m57biz.xls
      ```
    - Confirmed it has the OLECF signature: `d0 cf 11 e0 a1 b1 1a e1`.
 
-4. **Inspect the File Metadata Using `file`**
-   - You have used the `file` command:
+6. **Inspect the File Metadata Using `file`**
+   - Used the `file` command:
      ```shell
      file m57biz.xls
      ```
@@ -31,12 +49,12 @@
      Composite Document File V2 Document, Little Endian, Os: Windows, Version 5.1, Code page: 1252, Author: Alison Smith, Last Saved By: Jean User, Name of Creating Application: Microsoft Excel, Create Time/Date: Thu Jun 12 15:13:51 2008, Last Saved Time/Date: Sun Jul 20 01:28:03 2008, Security: 0
      ```
 
-5. **Inspect the File Metadata Using `olemeta`**
-   - Use the `olemeta` tool to extract more detailed metadata:
+7. **Inspect the File Metadata Using `olemeta`**
+   - Used the `olemeta` tool to extract more detailed metadata:
      ```shell
      olemeta m57biz.xls
      ```
-   - Document any interesting findings. For instance, the `olemeta` output showed:
+   - Output from `olemeta`:
      ```
      Name: m57biz.xls
      Author: Alison Smith
@@ -59,12 +77,10 @@
 - **Authorship**:
   - The document was authored by Alison Smith and last saved by Jean User.
 
-### Step-by-Step Instructions:
-
 #### Part (b): Verification of File Type
 
 1. **Confirm OLECF File Type**:
-   - You confirmed the file is an OLECF file using `hexdump` and `file`.
+   - Confirmed the file is an OLECF file using `hexdump` and `file`.
 
 2. **Verify Using Hexdump**:
    - The initial bytes match the OLECF signature, indicating it is a Microsoft Office file.
@@ -72,8 +88,6 @@
 3. **Inspect Metadata**:
    - The `file` command provided initial metadata.
    - The `olemeta` tool provided detailed metadata, confirming the authorship and timestamps.
-
-### Step-by-Step Instructions:
 
 #### Part (c): Inspection of Metadata with File and Olemeta
 
@@ -116,8 +130,6 @@
   grep -i "m57biz.xls" /var/log/syslog
   ```
 
-By following these steps, you should be able to gather the necessary information to answer the customer’s questions comprehensively. Document each finding in your report as you progress through the analysis.
-
 ### Report on Initial Findings
 
 Based on the metadata extracted from the `m57biz.xls` file:
@@ -130,5 +142,3 @@ Based on the metadata extracted from the `m57biz.xls` file:
 
 - **Who else from the company was involved?**
   - Further analysis of system logs and user activities is needed to determine additional involvement.
-
-By meticulously documenting these findings and continuing with the investigation steps outlined, you will be able to provide a comprehensive report on the incident.
