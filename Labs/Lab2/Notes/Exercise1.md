@@ -54,6 +54,7 @@
   00008000
   ```
 - **Verification**: The filesystem is identified as NTFS.
+ ![Verification Screenshot](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-HexDump-SC2.JPG)
 
 #### Step 3: Filesystem Extraction
 - **Command**: `dd if=disk.bin of=ntfs_partition.bin bs=512 skip=63 count=20948697`
