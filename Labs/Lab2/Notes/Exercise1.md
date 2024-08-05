@@ -74,3 +74,4 @@
 - **Findings**:
   - Successfully extracted the NTFS filesystem from the disk image.
   - SHA1 hash of the extracted filesystem: `f8ec0f28b54ef1a9d4f3775c1903bc28493a2743`
+  ![Final Setup Screenshot](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-FileSystem-SC3.JPG)
