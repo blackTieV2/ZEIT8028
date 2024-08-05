@@ -40,6 +40,34 @@
         <tr><td nowrap>6:13:19 AM</td><td nowrap>alisonm57</td><td nowrap><font color="blue">bye</font></td></tr>
         ```
   ![ScreenShot of `alisonm57.html`](https://github.com/blackTieV2/ZEIT8028/blob/main/Labs/Lab2/ScreenShots/Lab2-Ex4-alisonm57_html.JPG)
+### Analysis of AIM and AlisonM57 HTML Files
+
+The content of the AIM and AlisonM57 HTML files provides valuable insight into the interactions between Jean and Alison. Here's a detailed analysis of both files:
+
+#### AIM Chat History (`aim.html`)
+- The AIM chat history shows automated messages from the AIM service on two dates: July 19 and July 20, 2008.
+- The messages inform Jean about buddy requests and provide links to view these requests.
+- No direct messages or interactions between Jean and any other individual are shown in this file.
+
+#### AlisonM57 Chat History (`alisonm57.html`)
+- The chat history between Jean (m57jean) and Alison (alisonm57) spans from July 18 to July 21, 2008.
+- The conversations cover various topics, including work-related discussions and personal matters.
+- Key points from the chat logs include:
+  - Alison reminding Jean to focus more on work.
+  - Jean acknowledging tasks and mentioning issues like PMS.
+  - Alison and Jean discussing the company's direction and finances.
+  - Alison questioning Jean about cash left in the account, with Jean responding about the discretionary funds available.
+  - Jean making casual remarks about the boss and mentioning looking for a new laptop bag.
+  - Alison indicating the need for high-speed internet for her next hotel stay.
+  - Jean mentioning putting together an itinerary using a notebook app.
+
+### Insights
+- The chat history between Alison and Jean suggests a close working relationship with frequent communication. Alison appears to be in a supervisory role, reminding Jean of work priorities and financial matters.
+- These chats also hint at potential financial irregularities or issues within the company, as Jean mentions discretionary funds and the boss "dipping" into resources.
+- The next step would be to correlate the chat history timestamps with other relevant data on Jean's computer, such as email records, to determine if the spreadsheet was shared or discussed during these conversations.
+
+This analysis provides a clearer picture of the interactions between Jean and Alison and helps build a profile of Jean's computer usage and communication patterns.
+
 ### Relevant Time Metadata
 
 From the analysis of the `alisonm57.html` file, the relevant time metadata for the conversations between Jean (m57jean) and Alison (alisonm57) are as follows:
