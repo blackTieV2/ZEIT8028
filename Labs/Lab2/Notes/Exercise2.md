@@ -1,5 +1,3 @@
-Great! You've successfully mounted the filesystem and listed its contents both dynamically and statically. Now let's address the next steps and questions.
-
 ### Exercise 2: Initial Inspection
 
 #### a) Dynamically Inspect the Filesystem
@@ -68,5 +66,3 @@ fls lab2_partition.bin
    - When was the spreadsheet created?
    - How did it get from Jean's computer to the competitor's website?
    - Who else was involved?
-
-Feel free to ask if you need further assistance with any specific commands or analysis steps!
