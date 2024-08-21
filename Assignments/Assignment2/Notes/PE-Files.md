@@ -90,3 +90,21 @@ ____
 
 ### Conclusion:
 The presence of `plink.exe` in the `\Windows\Temp\` directory, its execution with SSH tunneling commands, and the use of administrative privileges strongly suggest that it was used maliciously to establish a backdoor or for data exfiltration purposes. Immediate action is required to mitigate the threat.
+
+____
+## Mismatched Hashes for `OneDriveSetup.exe`
+   - **Hash from the Known Good Version**:
+     - **MD5**: 1941AED7D47CA3A8DA33D98B6D877E88
+     - **SHA-256**: 9B1D2D09D1D26A0B6558828017E47A06357BA1B19FE18DF746934692D69976CC6
+   - **Hash from the Folder Under Examination**:
+     - **MD5**: 5227633dd8fa0f4b4845b360906ac9bc
+     - **SHA-256**: a4cd491248830ad4986acc6f0217407cbcc278f0a9396c3566da8db93f54009d
+   - **Analysis**:
+     - The significant difference in hashes between the known good version of `OneDriveSetup.exe` and the version found in the OneDrive folder under examination indicates that the latter has likely been altered or replaced.
+     - **Risk Implication**: This alteration strongly suggests malicious intent. The attacker might have replaced the legitimate installer with a trojanized version to gain persistence or execute further malicious activities on the compromised system.
+     - **Action**: This altered `OneDriveSetup.exe` should be treated as highly suspect and requires deep analysis, including static and dynamic analysis to determine its true purpose and functionality. Additionally, check if this altered executable was executed, which could provide further insight into the attack's progression.
+
+### Conclusion
+- The presence of duplicate `CollectSyncLogs.bat` files in different folders, the discrepancy in the file count between similar folders, and the mismatched hashes for `OneDriveSetup.exe` all point towards a likely compromise involving these files. The evidence suggests that the attacker may have used these files to establish or maintain persistence, execute malicious payloads, and potentially collect sensitive data.
+
+This analysis underscores the need for further investigation into these artifacts, including checking for any related network activity, cross-referencing with system and application logs, and examining other files in the surrounding directories.
