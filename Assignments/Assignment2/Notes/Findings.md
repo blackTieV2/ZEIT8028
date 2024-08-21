@@ -36,58 +36,7 @@
    - **Check for Persistence**: Investigate whether the malware installed any persistence mechanisms, such as registry keys or scheduled tasks, to survive reboots.
    - **Review Network Traffic**: Examine network logs to see if the malware attempted to communicate with external IPs, potentially exfiltrating data or downloading additional payloads.
    - **Correlate with Other Artifacts**: Cross-reference the execution of `RESUME.DOC.EXE` with other suspicious activities in system logs, memory dumps, and user behavior to build a comprehensive timeline of the attack.
-___
 
-## `vagrant-shell.ps1` PowerShell script.
-
-### Key Event Data Points:
-
-1. **Event ID 4104 (PowerShell Script Block Logging)**
-   - **Content of Script Blocks**: 
-     - The script references a file, `vagrant-shell.ps1`, stored in the `/tmp/` directory, and it performs operations such as creating file streams, handling file paths, and clearing PowerShell script block caches.
-     - Functions like `Cleanup`, `Check-Files`, and `Get-SHA1Sum` suggest that the script might be verifying the integrity of files by calculating their SHA1 hashes and comparing them with known values.
-     - The script contains a section to ensure a destination directory exists and, if it doesn't, it creates it (`mkdir $parent`).
-     - It also calls an internal PowerShell method `ClearScriptBlockCache`, likely intended to manage memory usage or to remove traces of previously executed script blocks, which is suspicious.
-
-2. **Event ID 600 (PowerShell Host Startup)**
-   - **Host Application**: The PowerShell script was executed with the command line: `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -OutputFormat Text -file c:\tmp\vagrant-shell.ps1`.
-   - **Execution Policy**: The `-ExecutionPolicy Bypass` parameter is significant because it allows the script to bypass system-wide execution policies, which is often seen in malicious scripts to avoid detection.
-   - **Providers Started**: The logs show that various providers like `Registry`, `Alias`, `FileSystem`, and `Function` were started, indicating that the script was interacting with these components.
-
-3. **Event ID 400 and 403 (PowerShell Engine State Changes)**
-   - These events log changes in the state of the PowerShell engine, such as starting and stopping, associated with the execution of the `vagrant-shell.ps1` script.
-
-### Analysis:
-
-- **Malicious Indicators**:
-  - **Bypass Execution Policy**: The use of `-ExecutionPolicy Bypass` is a red flag. It suggests that the script is trying to avoid any restrictions that might prevent it from running, which is typical behavior for malicious or unauthorized scripts.
-  - **Clearing Script Block Cache**: The script includes code to clear the PowerShell script block cache. This could be an attempt to remove traces of previously executed code, which is suspicious and could indicate an effort to hide malicious activity.
-  - **File Integrity Checks**: The script performs SHA1 hash checks on files, which could either be a legitimate operation (e.g., ensuring the integrity of configuration files) or could be part of a malware's internal checks to ensure its payloads haven't been tampered with.
-
-### Script Overview:
-
-The `vagrant-shell.ps1` script is highly suspicious and likely malicious based on the following key actions it performs:
-
-1. **Disabling Windows Defender Features**:
-   - The script uses **Set-MpPreference** commands to disable critical Windows Defender features, including:
-     - **Real-Time Monitoring**: Stops real-time protection that scans files as they are accessed or downloaded.
-     - **Behavior Monitoring**: Disables monitoring for suspicious application behavior.
-     - **Script and Archive Scanning**: Prevents scanning of scripts and archives, which could allow the execution of other malicious files undetected.
-     - **Network and Removable Drive Scanning**: Disables scanning of files on USB drives, network drives, and mapped drives.
-   - **Summary**: These actions significantly reduce the system’s security, making it vulnerable to malware and other attacks.
-
-2. **Persisting Changes in the Registry**:
-   - The script modifies registry keys under `HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender` to ensure that Windows Defender remains disabled even after a system reboot.
-   - **Registry Keys Affected**:
-     - **DisableAntiSpyware**: Completely disables Windows Defender AntiSpyware.
-     - **DisableRealtimeMonitoring**: Ensures real-time monitoring stays off.
-     - **DisableBehaviorMonitoring**: Keeps behavior monitoring off.
-     - **DisableOnAccessProtection** and **DisableScanOnRealtimeEnable**: These further reduce the system's ability to protect against and detect malware in real-time.
-
-### Indicators of Malicious Intent:
-
-- **Complete Disabling of Security Features**: The script systematically disables almost all protective features of Windows Defender, which is a strong indicator of malicious intent. This behavior is typical of malware that aims to avoid detection and facilitate further malicious activity, such as downloading additional payloads, stealing data, or providing remote access to attackers.
-- **Persistence Through Registry Changes**: By modifying the registry, the script ensures that these settings are preserved across reboots, making the system persistently vulnerable. This is a common tactic used by malware to maintain a foothold on the system.
 ___
 
 ## `WinRM_Elevated_Shell`
@@ -145,3 +94,45 @@ The task definition includes specific details that further point to malicious in
 ### Conclusion:
 
 The `WinRM_Elevated_Shell` task is a significant indicator of malicious activity. Its creation and execution are designed to grant elevated privileges, bypass security mechanisms, and hide its tracks, making it a likely tool for maintaining persistence or carrying out further attacks on the compromised system. Immediate remediation actions should include disabling and removing the task, restoring any security settings it may have altered, and conducting a thorough investigation to determine the full scope of the compromise.
+
+
+____________
+
+Based on the directory and the files listed in the folder `/img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Microsoft/OneDrive/18.143.0717.0002/`, it appears that this directory contains several executable and dynamic link library (DLL) files, which are not typically found in a user's OneDrive directory. This is suspicious and warrants further investigation.
+
+### Suspicious Files in the Directory:
+
+1. **`CollectSyncLogs.bat`**:
+   - **Type**: Batch file (`.bat`)
+   - **Suspicious Activity**: Batch files can execute commands that modify the system, delete or copy files, or run other executables. This could be a script used for logging purposes, or it could be used maliciously.
+
+2. **`FileCoAuth.exe`**:
+   - **Type**: Executable file (`.exe`)
+   - **Suspicious Activity**: Executable files can be used to run programs or scripts. If this executable is not part of a legitimate OneDrive operation, it might be a malicious file introduced by an attacker.
+
+3. **Various DLL files**:
+   - **`FileSyncClient.dll`, `FileSyncShell.dll`, `FileSyncViews.dll`, `ipcfile.dll`, `ipcsecproc.dll`, `libeay32.dll`, `msipc.dll`, `Qt5Widgets.dll`**:
+   - **Type**: Dynamic Link Library files (`.dll`)
+   - **Suspicious Activity**: DLL files are used by executables to perform functions. Malicious DLLs can be used in attacks such as DLL hijacking or side-loading, where an attacker places a malicious DLL in a location where it will be loaded by a legitimate program.
+
+4. **`TestSharePage.html`**:
+   - **Type**: HTML file
+   - **Suspicious Activity**: HTML files can be used for phishing or redirecting users to malicious websites. The context in which this file was created and used is critical to understanding its purpose.
+
+5. **`ThirdPartyNotices.txt`**:
+   - **Type**: Text file
+   - **Suspicious Activity**: Typically, `.txt` files are less likely to be malicious on their own but could be part of a larger malicious package or operation. This file might just contain third-party notices as the name suggests, but it should still be reviewed.
+
+### Analysis and Next Steps:
+1. **Hash Analysis**: The SHA-256 and MD5 hashes provided should be checked against known malware databases like VirusTotal to determine if these files are known to be malicious.
+
+2. **Dynamic and Static Analysis**:
+   - Analyze the batch file (`CollectSyncLogs.bat`) for commands that might be executed.
+   - The executable files (`FileCoAuth.exe` and DLLs) should be dynamically and statically analyzed to understand their behavior. You can use tools like Ghidra, IDA Pro, or any debugger to reverse engineer them.
+   - The HTML file (`TestSharePage.html`) should be opened and reviewed to see if it contains any suspicious content, such as phishing links or embedded malicious scripts.
+
+3. **Cross-reference**: Review the creation and modification timestamps to see if these files correspond to any known suspicious activity on the machine. Check system logs for any execution of these files.
+
+4. **Network Connections**: If any of these executables were run, investigate whether they established any network connections that could indicate data exfiltration or command-and-control activity.
+
+These files should be treated with caution as they are located in a directory where you wouldn't typically expect to find such executables and scripts. This anomaly suggests that the files might have been placed there as part of a compromise.
