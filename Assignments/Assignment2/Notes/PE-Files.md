@@ -108,3 +108,85 @@ ____
 - The presence of duplicate `CollectSyncLogs.bat` files in different folders, the discrepancy in the file count between similar folders, and the mismatched hashes for `OneDriveSetup.exe` all point towards a likely compromise involving these files. The evidence suggests that the attacker may have used these files to establish or maintain persistence, execute malicious payloads, and potentially collect sensitive data.
 
 This analysis underscores the need for further investigation into these artifacts, including checking for any related network activity, cross-referencing with system and application logs, and examining other files in the surrounding directories.
+_____
+
+Here is a detailed GitHub Markdown entry that contextualizes the investigation findings regarding the `scvhost.exe` file:
+
+---
+
+# **Malicious `scvhost.exe` File Investigation**
+
+## **Overview**
+
+During the investigation of the compromised system, a suspicious executable named `scvhost.exe` was discovered in the `Temp` directory of the user "Alan". The file exhibited several red flags, including being flagged as malicious by multiple security vendors and displaying characteristics typical of malware payloads. This document provides a detailed analysis of the file and its potential impact on the system.
+
+## **File Information**
+
+- **File Path**: `/img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Temp/scvhost.exe`
+- **File Type**: PE64 (Windows Executable)
+- **Size**: 7.00 KB
+- **MD5**: `2a51f5723eabc17be1336e93fd092f3d`
+- **SHA-256**: `5581667dfe47539d04c47ff729bcd771f3df2772ce768e6746832c192a37f745`
+- **MIME Type**: `application/x-dosexec`
+- **Created**: `2019-08-17 13:48:39 SGT`
+- **Modified**: `2019-08-17 13:48:39 SGT`
+- **Accessed**: `2019-08-17 13:49:18 SGT`
+
+## **Detection and Analysis**
+
+### **VirusTotal Report**
+The `scvhost.exe` file was analyzed on [VirusTotal](https://www.virustotal.com/gui/file/5581667dfe47539d04c47ff729bcd771f3df2772ce768e6746832c192a37f745), where it was flagged by **58 out of 71** security vendors as malicious. The detections included associations with various malware families, notably:
+
+- **Trojan.Metasploit.A**
+- **Win64: Evo-gen [Trj]**
+- **Trojan.Win64.Shelma**
+- **BackDoor.Shell.244**
+
+### **File Characteristics**
+- **Time Stamp Anomalies**: The file was created, modified, and accessed in a very short window of time, suggesting it was immediately executed after being dropped on the system.
+- **PE Analysis**: The file uses outdated linker and assembler tools, which could indicate an attempt to evade modern security defenses.
+
+### **Behavioral Indicators**
+Given the context in which `scvhost.exe` was found—within the `Temp` directory of a user—this file is highly suspicious and likely part of a larger attack chain. The `Temp` directory is often used by malware for staging malicious activities, including running payloads and establishing persistence.
+
+## **Investigation Context**
+
+### **Related Findings**
+- The `scvhost.exe` file was found shortly after the detection of other suspicious activities on the system, including the presence of a malicious `CollectSyncLogs.bat` script, and potentially compromised OneDrive installation files.
+- The investigation into the PowerShell logs and other system logs indicated possible remote command execution and system reconnaissance activities around the time `scvhost.exe` was active.
+
+### **Initial Attack Vector**
+- **Suspicion**: The initial compromise may have occurred through the execution of a malicious script or the download of a compromised file, leading to the execution of `scvhost.exe`.
+
+### **Extent of Compromise**
+- **Secondary and Tertiary Actions**: The `scvhost.exe` file could have been used to deploy additional payloads, establish backdoors, or exfiltrate data. The extent of these actions requires further analysis of network logs and process creation events.
+- **Persistence Mechanism**: It is plausible that `scvhost.exe` was designed to maintain persistence on the system, either by modifying startup scripts or registry keys, or by dropping additional payloads in less monitored locations.
+
+### **Indicators of Compromise (IoCs)**
+- **SHA-256 Hash**: `5581667dfe47539d04c47ff729bcd771f3df2772ce768e6746832c192a37f745`
+- **File Path**: `Temp/scvhost.exe`
+- **MD5 Hash**: `2a51f5723eabc17be1336e93fd092f3d`
+- **Associated Activities**: Execution of PowerShell commands, creation of temporary files with suspicious names, remote command execution indicators.
+
+## **Next Steps**
+
+1. **System Containment**:
+   - Isolate the affected machine from the network to prevent further potential compromise or data exfiltration.
+
+2. **Detailed Log Analysis**:
+   - Further analyze PowerShell, WMI, and Security event logs to trace the origin and actions of `scvhost.exe`.
+
+3. **Root Cause Analysis**:
+   - Investigate any phishing emails, suspicious downloads, or external connections that might have been the initial attack vector leading to the presence of `scvhost.exe`.
+
+4. **Eradication and Recovery**:
+   - Remove the `scvhost.exe` file and any related malware artifacts from the system.
+   - Restore the system from a known good backup if available, and ensure all security patches are applied.
+
+5. **Strengthening Defenses**:
+   - Implement stricter monitoring of the `Temp` directories and utilize advanced threat detection tools to catch similar threats in the future.
+
+## **Conclusion**
+
+The discovery of `scvhost.exe` is a strong indicator of a significant compromise. Immediate action is required to contain and eradicate the threat, followed by a thorough investigation to understand the full extent of the attack and prevent future occurrences.
+
