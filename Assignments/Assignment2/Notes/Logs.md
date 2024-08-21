@@ -54,3 +54,127 @@ I’ve identified several key indicators of compromise and suspicious activities
 ### Conclusion:
 
 The firewall logs strongly indicate that the system may have been compromised, with an attacker manipulating firewall rules to facilitate malicious activities. Immediate action is recommended to restore the system’s security posture and prevent further compromise.
+
+_____________
+
+## Microsoft Defender Logs
+
+`185754-Microsoft-Windows-Windows Defender%4Operational.evtx`
+
+### Key Events & Indicators of Compromise:
+
+1. **Defender Configuration Changes**:
+   - **Event IDs 5007 & 5004** indicate multiple configuration changes in Microsoft Defender. These changes are a common tactic used by attackers to weaken or disable security features, potentially allowing malicious activities to proceed undetected.
+   - **Examples**:
+     - **SpyNetReporting**: The `SpyNetReporting` value was changed from `0x2` to `0x0`, disabling cloud-based protection.
+     - **Script Scanning**: The setting for `DisableScriptScanning` was changed from `0x0` to `0x1`, disabling the scanning of scripts, which could allow malicious scripts to execute without detection.
+     - **Real-time Protection**: Multiple events show that real-time protection features were altered, such as disabling `Behavior Monitoring`, `On Access`, and `IE Downloads and Outlook Express Attachments` monitoring.
+
+2. **Antivirus Scan Stopped**:
+   - **Event ID 1002** shows that a quick scan was started but stopped prematurely. This could indicate either a manual interruption or interference by malware.
+
+3. **Update Errors**:
+   - **Event IDs 2001** show errors when Defender tried to update its security intelligence. The errors, including `0x80072efe` (connection terminated abnormally) and `0x80072ee2` (operation timed out), suggest possible interference with the update process, potentially leaving the system vulnerable to new threats.
+
+### Timeline and Correlation with Other Logs:
+- **17/08/2019 05:36:42**: A flurry of changes in Defender's configuration occurs at this time, such as disabling various real-time protection features.
+- **Correlation**: This time aligns with other suspicious activities detected in the system, such as the execution of malicious PowerShell scripts and alterations in firewall settings.
+
+### Conclusion:
+The Defender logs present strong evidence of tampering, likely by an attacker aiming to disable or weaken security defenses. These events should be correlated with other logs to build a complete picture of the attack. The changes made to Defender settings are typical indicators of compromise (IOCs) and should be considered as part of a broader investigation into the security breach.
+
+_______
+
+## Application event log
+
+`185704-Application.evtx`
+
+### **Analysis of `Application` Event Log**
+
+1. **Security Notifications & Windows Defender State:**
+   - Multiple entries indicate that the status of Windows Defender was updated, with states being toggled between `SECURITY_PRODUCT_STATE_ON` and `SECURITY_PRODUCT_STATE_OFF`. This points to a potential attack that involves disabling or interfering with Windows Defender to avoid detection.
+
+2. **Application Crashes:**
+   - A critical event shows that the application `SystemSettingsAdminFlows.exe` crashed due to an access violation in `wintypes.dll`. This could potentially indicate exploitation attempts or the presence of a script or tool trying to modify system settings.
+
+3. **VSS Service Shutdown:**
+   - The VSS (Volume Shadow Copy Service) shutting down due to idle timeout is noted several times. This could indicate regular system behavior, but in some contexts, it might relate to tampering with system backups.
+
+4. **Certificate Updates:**
+   - There are multiple successful auto updates of third-party root certificates. While this can be normal system behavior, in some cases, it might also indicate unauthorized updates or man-in-the-middle (MITM) attacks.
+
+5. **Software Protection Platform:**
+   - Events related to Software Protection Platform (SPP) are recorded, including successful scheduling for service restarts and exclusion of policies. Malicious actors sometimes disable or manipulate these services to avoid license enforcement and protection features.
+
+### **Indicators of Potential Compromise:**
+- **Repeated Toggling of Windows Defender:** The switching of states from `ON` to `OFF` and vice versa, especially within a short period, is highly suspicious and suggests tampering.
+- **Application Crashes:** The crash of `SystemSettingsAdminFlows.exe` could be related to malicious activity or attempts to modify system settings, potentially indicating privilege escalation attempts.
+- **VSS Service Behavior:** If VSS service behavior aligns with other malicious activities, it could indicate attempts to delete or alter backups, potentially as part of ransomware or other destructive operations.
+
+________
+
+## System log
+
+`185771-System.evtx`
+
+### Key Indicators:
+1. **Service Modifications:**
+   - Multiple events indicate changes in the startup configuration of critical services, such as the `Background Intelligent Transfer Service (BITS)` and `Windows Modules Installer`. These services were changed from `demand start` to `auto start`, which could be an indication of persistence mechanisms or preparation for downloading/uploading data.
+
+2. **Windows Update Activities:**
+   - Frequent and repeated entries for updates to various Microsoft components and applications (e.g., Microsoft.NET, Microsoft.UI.Xaml, and others) appear, which is normal but can also be leveraged by attackers to introduce malicious updates or to cover up traces of their activities.
+
+3. **Registry Hive Access:**
+   - Multiple entries involving access to registry hives, particularly those related to user settings for applications like Microsoft Edge, Xbox, and Windows Photos. Although these entries could be benign, they could also suggest attempts to manipulate user data or application settings.
+
+### Suspicious Activity:
+1. **Frequent Service Start/Stop:**
+   - The log shows the `Background Intelligent Transfer Service` being toggled multiple times. Since BITS can be used to download or upload data in the background, its unexpected activation is concerning.
+
+2. **Modifications to Critical System Components:**
+   - The adjustments to `Windows Modules Installer` and `BITS` may suggest attempts to maintain or execute unauthorized changes. Attackers often manipulate these services to enable persistence or to execute malicious code.
+
+
+### Summary:
+The events captured in the `System` log suggest that system services and critical components have been modified. While these changes can be legitimate, their timing and the frequency of certain activities warrant further investigation to rule out unauthorized system manipulation.
+
+____
+
+## Code Integrity Logs 
+
+`185744-Microsoft-Windows-CodeIntegrity%4Operational.evtx`
+
+#### Key Events:
+- **Event ID 3085**: 
+  - The logs contain multiple entries with this event ID, which indicates that **Code Integrity** disabled **WHQL driver enforcement** for the boot session. 
+  - **WHQL (Windows Hardware Quality Labs) driver enforcement** ensures that only drivers that have been tested and signed by Microsoft are loaded. Disabling this enforcement can allow unsigned or potentially malicious drivers to be loaded during the boot process.
+
+#### Context and Implications:
+- **Suspicious Timing**:
+  - The Code Integrity logs show that WHQL driver enforcement was disabled at different times, with the most recent entries occurring on **August 17, 2019**, around **05:30-05:33 AM**. 
+  - This timing correlates with other suspicious activities found in previous logs, such as tampering with Windows Defender settings and the execution of potentially malicious PowerShell scripts. 
+
+- **Potential Exploitation**:
+  - Disabling WHQL enforcement can be a tactic used by attackers to load malicious drivers or kernel-level malware that could go undetected by traditional security tools. 
+  - The fact that this was done during the boot process suggests that an attacker may have attempted to establish deep persistence within the system, potentially compromising the kernel or critical system components.
+
+### Cross-Referencing with Other Logs:
+1. **PowerShell Logs (`185724-Microsoft-Windows-PowerShell%4Operational.evtx`)**:
+   - The timeframe of these Code Integrity events overlaps with periods of suspicious PowerShell activity. It’s possible that the scripts were used to disable driver enforcement or prepare the system to load unauthorized drivers.
+
+2. **System Logs (`185771-System.xml`)**:
+   - The System logs showed service modifications and potentially unauthorized service creations around this time. If malicious drivers were loaded, they could have been used to manipulate these services or establish further persistence.
+
+3. **Windows Defender Logs (`185754-Microsoft-Windows-Windows Defender%4Operational.xml`)**:
+   - The Defender logs indicate that critical security features were disabled or modified. This would complement the disabling of WHQL enforcement, providing a broader context of the attack strategy to weaken the system's defenses.
+
+### Summary:
+- **How Was the Computer Compromised?**:
+  - The repeated disabling of WHQL driver enforcement points to a potentially serious compromise, where the attacker gained the ability to load malicious drivers during system boot. This, combined with the manipulation of security settings and service configurations, suggests a sophisticated attack aimed at gaining deep persistence.
+
+- **Extent of the Compromise**:
+  - The attack likely included multiple stages: disabling security features, loading unauthorized drivers, and executing malicious scripts to control the system. The use of kernel-level attacks could mean that the attacker had extensive control over the system, possibly including the ability to evade detection and maintain long-term access.
+
+
+
+
