@@ -62,3 +62,32 @@
   - **Bypass Execution Policy**: The use of `-ExecutionPolicy Bypass` is a red flag. It suggests that the script is trying to avoid any restrictions that might prevent it from running, which is typical behavior for malicious or unauthorized scripts.
   - **Clearing Script Block Cache**: The script includes code to clear the PowerShell script block cache. This could be an attempt to remove traces of previously executed code, which is suspicious and could indicate an effort to hide malicious activity.
   - **File Integrity Checks**: The script performs SHA1 hash checks on files, which could either be a legitimate operation (e.g., ensuring the integrity of configuration files) or could be part of a malware's internal checks to ensure its payloads haven't been tampered with.
+___
+## `WinRM_Elevated_Shell` 
+
+Scheduled task is highly suspicious and likely malicious based on the following key indicators:
+
+### Key Details:
+1. **Scheduled Task Name**: `WinRM_Elevated_Shell`
+   - **Command**: Executes `cmd` with the following arguments:  
+     ```
+     /c powershell.exe -executionpolicy bypass -NoProfile -File c:/windows/temp/winrm-elevated-shell-f5d625ea-66b1-4480-bf3c-f84423135094.ps1 > C:\Users\Alan\AppData\Local\Temp\tmp95BE.tmp 2>C:\Users\Alan\AppData\Local\Temp\tmp95BF.tmp
+     ```
+   - **Privilege Level**: `HighestAvailable`, which means it runs with the highest privileges available to the user, potentially Administrator rights.
+   - **Hidden**: The task is not hidden (`Hidden: false`), which might be an attempt to blend in with legitimate tasks by not drawing attention.
+   - **Run As**: The task runs under the `alan` user account.
+
+2. **Execution Policy**: 
+   - **Bypass Execution Policy**: The `-executionpolicy bypass` flag allows the script to bypass any restrictions, which is a common tactic used by attackers to execute malicious scripts that would otherwise be blocked.
+
+3. **Script Path**:
+   - **Script Location**: The script is located in `c:/windows/temp/`, which is an unusual location for legitimate PowerShell scripts, adding to the suspicion.
+
+4. **Output Redirection**:
+   - **Standard Output and Error Redirection**: The output and error are redirected to temporary files (`tmp95BE.tmp` and `tmp95BF.tmp`) in the `AppData\Local\Temp\` directory, possibly to hide the script's output from view and facilitate later analysis or exfiltration by the attacker.
+
+### Indicators of Malicious Activity:
+- **Execution Policy Bypass**: The use of `-executionpolicy bypass` is a strong indicator of malicious intent, as it overrides any system policies meant to protect against unauthorized scripts.
+- **Elevated Privileges**: The task is set to run with the highest privileges available, which could allow it to perform actions that require administrative rights, such as disabling security controls or accessing sensitive files.
+- **Suspicious File Paths**: The use of temporary directories (`c:/windows/temp/` and `AppData\Local\Temp`) is typical for malicious activities, where attackers want to store files in locations that are less likely to be scrutinized by users or security software.
+- **Obfuscation and Redirection**: The redirection of output and errors to temporary files might indicate an attempt to keep logs of the task's execution or to gather information without alerting the user.
