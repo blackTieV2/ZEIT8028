@@ -24,3 +24,33 @@ from the `185724-Microsoft-Windows-PowerShell%4Operational.evtx` files contain a
 
 
 This analysis suggests that the system may have been subject to a sophisticated attack involving advanced PowerShell techniques. Further investigation and immediate action are recommended to contain and remediate the threat.
+
+______________
+
+## Firewall logs, 
+I’ve identified several key indicators of compromise and suspicious activities:
+`185757-Microsoft-Windows-Windows Firewall With Advanced Security%4Firewall.evtx`
+### Key Findings from the Firewall Logs:
+
+1. **Frequent Rule Modifications**:
+   - There are numerous logs indicating the addition, modification, and deletion of firewall rules. These changes were often made by `svchost.exe`, which is a legitimate system process but is frequently used by attackers to hide malicious activity.
+   - The rules added or modified frequently involve network permissions, specifically allowing or blocking inbound and outbound traffic for various applications, including `Microsoft.Messaging`, `Microsoft.WindowsCamera`, `Shell Input Application`, and others.
+
+2. **Suspicious Rule Changes**:
+   - **Rule Additions**: Many rules were added to allow both inbound and outbound traffic across all profiles (Private, Domain, Public). This could be an attempt to open up the system to external communications that bypass security controls.
+   - **Rule Deletions**: Several rules related to `WARP_JIT` were deleted, which might be an attempt to remove evidence or disable protective measures. The deletion of rules that block traffic could indicate an effort to ensure uninterrupted external communications, possibly for data exfiltration or command-and-control activities.
+
+3. **Obfuscation and Bypassing**:
+   - The firewall rules were frequently modified in a way that could bypass security mechanisms. For example, allowing inbound connections without specifying a precise application path, or using wildcard addresses (`*`) for both local and remote addresses, is a common tactic used to make rules overly permissive.
+   - **Edge Traversal**: Some rules enabled edge traversal, allowing traffic to bypass network address translation (NAT) and reach the machine directly from external networks. This is particularly concerning if it was not explicitly configured for legitimate reasons.
+
+### Indicators of Compromise:
+
+- **Unauthorized Rule Modifications**: The numerous changes to firewall rules, especially those that allow wide-ranging access or delete protective measures, strongly suggest that the system was compromised.
+- **Use of `svchost.exe`**: The consistent use of `svchost.exe` to modify these rules is suspicious. While it’s a legitimate process, its use in this context could indicate that an attacker has hijacked it to perform these modifications stealthily.
+- **Wildcard Usage**: The extensive use of wildcards for IP addresses and ports suggests that the rules were designed to be overly permissive, which could facilitate unauthorized access or data exfiltration.
+
+
+### Conclusion:
+
+The firewall logs strongly indicate that the system may have been compromised, with an attacker manipulating firewall rules to facilitate malicious activities. Immediate action is recommended to restore the system’s security posture and prevent further compromise.
