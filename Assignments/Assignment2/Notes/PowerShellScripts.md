@@ -44,4 +44,44 @@ The `Sticky.ps1` PowerShell script is designed to capture screenshots of the des
 ### Conclusion:
 
 The `Sticky.ps1` script is a clear indicator of malicious activity, designed to capture and possibly exfiltrate sensitive information from the victim's system. It should be treated with caution, and immediate steps should be taken to remove it from the system and investigate any further compromises it may be associated with.
+_____________________
+## `ElevateExecute.ps1`
+
+### Overview:
+`ElevateExecute.ps1` is a PowerShell script designed to ensure that specified programs or scripts run with elevated privileges. This is significant because it can be used to execute other scripts or programs with administrative rights, bypassing User Access Control (UAC) and potentially leading to unauthorized actions on the system.
+
+### Script Functionality:
+
+1. **Parameters**:
+   - **$Program**: Path to the program or script to be executed.
+   - **$Arguments**: Optional arguments for the program.
+
+2. **Privilege Elevation**:
+   - **Admin Check**: The script checks if it is running with administrative privileges using the `Test-IsAdmin` function.
+   - **Re-launch with Elevated Rights**: If not running as an admin, the script will re-launch itself with elevated privileges using the `runas` verb.
+
+3. **Program Execution**:
+   - If running as an administrator, the script will execute the specified program with any provided arguments using `Start-Process`.
+
+### Indicators of Malicious Activity:
+
+- **Privilege Escalation**: The script is designed to force elevation, which can be exploited to run other malicious scripts with administrative privileges, bypassing security controls.
+- **Suspicious Context**: The script's presence and execution alongside other malicious scripts, such as `vagrant-shell.ps1` and `Sticky.ps1`, suggest that it is part of a coordinated attack.
+
+### Timeline Integration:
+
+- **August 17, 2019, 05:36 AM**:
+  - The script was executed as part of a sequence of actions that included the execution of `vagrant-shell.ps1` and `winrm-elevated-shell.ps1`. This timeline suggests that the attacker first used `ElevateExecute.ps1` to gain administrative privileges and then deployed additional scripts to disable security features and capture data.
+
+### Key Logs and Evidence:
+
+- **Event ID 4104**:
+  - Indicates that the script was run with elevated privileges, possibly after bypassing UAC.
+  - Correlated with the execution of other suspicious scripts at the same time .
+
+- **Prefetch Information**:
+  - Shows that `ElevateExecute.ps1` was executed multiple times, likely to ensure the successful deployment of the attacker’s payloads .
+
+### Conclusion:
+The `ElevateExecute.ps1` script is likely part of a broader attack strategy aimed at elevating privileges to run other malicious scripts. Its presence and usage, particularly in close proximity to other malicious activities, reinforce its suspicious nature and justify further investigation.
 
