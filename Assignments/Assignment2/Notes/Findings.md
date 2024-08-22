@@ -1,4 +1,25 @@
+Based on the Wireshark evidence you provided, we can confirm that `resume.doc.exe` was indeed downloaded and executed as part of a broader attack chain. Here’s how we know:
 
+### 1. **Network Traffic to C2 Server**:
+   - The network traffic you filtered for the C2 server (`69.50.64.20`) shows an interaction that included PowerShell commands, indicating that the attacker gained access and executed commands remotely. 
+   - The command to download and execute PowerShell scripts from `pastebin.com` indicates an active exploitation stage.
+
+### 2. **Confirmation via Command Execution**:
+   - The sequence of commands executed via PowerShell confirms that the attacker attempted to escalate privileges and create persistent backdoors (`Sticky.ps1`, `Service.ps1`). This behavior aligns with typical post-exploitation activities following a successful malware execution.
+   - The attacker used PowerShell to download additional payloads and scripts (`scvhost.exe`), which aligns with the execution of a file like `resume.doc.exe` initiating the attack.
+
+### 3. **Malware Behavior**:
+   - From the screenshots provided, we see that `resume.doc.exe` is a Metasploit payload, which is known for downloading and executing additional malicious content.
+   - The network connections and process behaviors associated with `resume.doc.exe` further confirm its role in establishing a backdoor and communicating with the C2 server.
+
+### 4. **Wireshark Analysis**:
+   - The specific network traffic captured and followed in the TCP stream provides concrete evidence of commands executed by the attacker.
+   - The PowerShell commands and script execution indicate that the system was compromised and that `resume.doc.exe` likely played a central role in this.
+
+### Conclusion:
+Given the network evidence, the command execution logs, and the malware analysis, it is highly certain that `resume.doc.exe` was downloaded and executed as part of a malicious operation. The activities following its execution, such as C2 communications and script-based attacks, are clear indicators of the file’s malicious nature.
+
+_________________
 
 Based on the directory and the files listed in the folder `/img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Microsoft/OneDrive/18.143.0717.0002/`, it appears that this directory contains several executable and dynamic link library (DLL) files, which are not typically found in a user's OneDrive directory. This is suspicious and warrants further investigation.
 
