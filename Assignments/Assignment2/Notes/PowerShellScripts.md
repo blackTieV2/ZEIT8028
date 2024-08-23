@@ -1,4 +1,4 @@
-## **`Sticky.ps1**
+## **`Sticky.ps1`**
 
 - **Purpose**: The `sticky.ps1` script is designed to exploit the **Sticky Keys** feature in Windows by modifying the Windows Registry. Specifically, it replaces the Sticky Keys executable (`sethc.exe`) with the Command Prompt (`cmd.exe`), enabling an attacker to launch a command prompt with system-level privileges without needing to log in.
 
