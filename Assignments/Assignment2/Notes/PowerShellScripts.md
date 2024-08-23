@@ -1,49 +1,37 @@
-## `Sticky.ps1`
+## **`Sticky.ps1**
 
-The `Sticky.ps1` PowerShell script is designed to capture screenshots of the desktop at regular intervals, saving the images to a publicly accessible directory. This script is likely used for data exfiltration and is highly suspicious due to its functionality.
+- **Purpose**: The `sticky.ps1` script is designed to exploit the **Sticky Keys** feature in Windows by modifying the Windows Registry. Specifically, it replaces the Sticky Keys executable (`sethc.exe`) with the Command Prompt (`cmd.exe`), enabling an attacker to launch a command prompt with system-level privileges without needing to log in.
 
-### Script Overview:
+- **Operation**:
+  - **Registry Path**: The script targets the registry key at `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe`.
+  - **Registry Modification**:
+    - The script first checks if the specified registry path exists. If not, it creates it.
+    - It then adds a new property named `"Debugger"` with the value `"C:\windows\system32\cmd.exe"` to this registry key.
+    - By setting this property, the script essentially tells Windows to launch `cmd.exe` whenever `sethc.exe` (Sticky Keys) is triggered.
 
-1. **Screen Capture Functionality**:
-   - The script runs in an infinite loop, capturing the screen every 30 seconds using .NET's `System.Drawing` and `System.Windows.Forms` libraries.
-   - Each screenshot is saved as a PNG file in `C:\Users\Public\Pictures\` with a filename that includes a timestamp (e.g., `ss_20240821_112026.png`).
+- **Effect**:
+  - After executing this script, pressing `Shift` five times on the Windows login screen will open a command prompt instead of the Sticky Keys dialog. This command prompt runs with system privileges, giving the user or attacker full control over the system.
 
-2. **Infinite Loop**:
-   - The `while ($true)` loop ensures that the script continuously captures screenshots without stopping, which is a typical behavior in scripts designed for continuous monitoring or data gathering.
+## **Indicators of Malicious Activity:**
 
-3. **File Storage**:
-   - Screenshots are stored in a publicly accessible directory (`C:\Users\Public\Pictures\`). This location is often used in attacks to make it easier for attackers to retrieve the captured data, especially if the system is later compromised for file access.
+- **Registry Modification**:
+  - **Unusual Registry Key**: The script modifies a key under `Image File Execution Options`, which is commonly abused by attackers to redirect the execution of certain applications, such as accessibility tools, to other executables (e.g., `cmd.exe`).
+  - **Debugger Property**: The creation of a `"Debugger"` property pointing to `cmd.exe` is a classic indicator of an attempt to bypass security controls and gain unauthorized access.
 
-### Indicators of Malicious Activity:
+- **Privilege Escalation**:
+  - **Unauthorized Access**: The script is designed to provide system-level command-line access, bypassing normal authentication mechanisms, which is a clear sign of a privilege escalation attempt.
 
-- **Continuous Monitoring**:
-  - The script’s infinite loop suggests it is intended to run indefinitely, capturing potentially sensitive information displayed on the screen over time.
+- **Potential Persistence**:
+  - **Sticky Keys Exploit**: This method can be used to maintain unauthorized access to a system, as it allows an attacker to open a command prompt with elevated privileges at any time from the login screen.
 
-- **Public Directory for Storage**:
-  - Storing files in `C:\Users\Public\Pictures\` may facilitate easy retrieval of the screenshots by an attacker or by another component of the attack.
+## **Conclusion:**
 
-- **Data Exfiltration Potential**:
-  - The captured screenshots could be used to gather information about the victim's activities, including sensitive data such as passwords, financial information, or confidential documents.
+The `sticky.ps1` script is a clear example of a malicious script designed to facilitate unauthorized access to a Windows system. By exploiting the Sticky Keys feature, it allows an attacker to bypass the login screen and gain system-level access through a command prompt. This type of attack is particularly dangerous because it requires minimal interaction from the user and can be executed even if the system is locked.
 
-### Connections to Other Scripts:
-
-- **Possible Link to `vagrant-shell.ps1`**:
-  - The `Sticky.ps1` script may be used in conjunction with `vagrant-shell.ps1`, which disables Windows Defender and establishes persistence. After disabling defenses, `Sticky.ps1` could be deployed to silently capture data from the compromised system.
-
-### Next Steps for Investigation:
-
-1. **Check for Scheduled Tasks**:
-   - Investigate whether `Sticky.ps1` is run as part of a scheduled task or any other persistence mechanism set up by other scripts or attackers.
-
-2. **Search for Captured Data**:
-   - Examine the `C:\Users\Public\Pictures\` directory to see if there are any saved screenshots, which could provide insights into what the attacker was monitoring.
-
-3. **Review PowerShell Logs**:
-   - Analyze PowerShell event logs to identify when and how `Sticky.ps1` was executed, and whether it was triggered by another script or task.
-
-### Conclusion:
-
-The `Sticky.ps1` script is a clear indicator of malicious activity, designed to capture and possibly exfiltrate sensitive information from the victim's system. It should be treated with caution, and immediate steps should be taken to remove it from the system and investigate any further compromises it may be associated with.
+**Recommendations**:
+- **Immediate Action**: If this script is found on a system, it is crucial to investigate further to determine how it was introduced and whether unauthorized access has been gained.
+- **Mitigation**: Restore the original `sethc.exe` behavior by removing the `"Debugger"` property or setting it back to its default value.
+- **Monitoring**: Implement monitoring to detect future attempts to modify the registry in this manner, and consider restricting access to the registry for non-administrative users.
 _____________________
 ## `ElevateExecute.ps1`
 
