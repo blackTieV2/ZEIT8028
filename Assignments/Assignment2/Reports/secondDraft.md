@@ -1,3 +1,53 @@
+# **Executive Summary**
+
+This report investigates the compromise of a client’s system through a sophisticated cyberattack that employed multiple stages of infection, leading to extensive unauthorized access and potential data exfiltration. The investigation addressed key questions posed by the client, including the identification of the initial attack vector, the extent of the compromise, and the possibility of stolen data. The findings provide a clear narrative of the attack, offering actionable intelligence to aid the client in improving their security posture.
+
+### **How Was the Computer Compromised?**
+The initial compromise was achieved through a malicious link embedded in a website accessed by the user. Specifically, the user’s browsing session on a legitimate news site was hijacked by a malicious advertisement served from `z.moatads.com`, redirecting the user to a file-sharing site, `uploadfiles.io`. Here, the user was tricked into downloading and executing a file named `resume.doc.exe`, which was disguised as a legitimate document but was actually a trojan designed to initiate the compromise.
+
+### **What Was the Extent of the Compromise?**
+The compromise unfolded in three critical stages:
+1. **Second Stage - PowerShell Script Execution:** The execution of multiple malicious PowerShell scripts downloaded from Pastebin disabled the system’s defenses and established persistence. Notably, `vagrant-shell.ps1` disabled key Windows Defender features, and `Service.ps1` installed a persistent backdoor service named `ScvHost`.
+   
+2. **Third Stage - Deployment of Backdoor and SSH Tunnel:** The malicious executable `scvhost.exe` was deployed, providing a covert backdoor. Concurrently, `plink.exe`, a tool from the PuTTY suite, was used to create an SSH tunnel, forwarding RDP traffic to a remote server, thereby facilitating ongoing remote access and control of the compromised system.
+
+### **Was Anything Taken?**
+The attacker’s actions strongly indicate that sensitive data was likely exfiltrated. The use of `procdump64.exe` to dump the memory of the `lsass.exe` process suggests that the attacker harvested plaintext credentials, including NTLM hashes and Kerberos tickets. Although no direct evidence of data exfiltration via network traffic was found, the established SSH tunnel provides a likely channel through which sensitive information, including potentially compressed memory dumps (`lsass.zip`), could have been transmitted undetected.
+
+### **Actionable Intelligence**
+Key Indicators of Compromise (IOCs) identified during the investigation include:
+- **Malicious Domains:** `z.moatads.com`, `uploadfiles.io`
+- **Malicious Executables:** `resume.doc.exe`, `scvhost.exe`
+- **PowerShell Scripts:** `vagrant-shell.ps1`, `Service.ps1`
+- **Network Indicators:** SSH connections to IP `69.50.64.20` on port `22`
+
+These IOCs should be integrated into the client’s security monitoring systems to detect and prevent similar attacks in the future. Additionally, the client should consider enhanced monitoring of PowerShell activity and RDP traffic to prevent unauthorized remote access.
+---
+
+# **Background**
+
+On 2023-09-02, our firm was engaged by a long-standing client to conduct a digital forensic investigation into a suspected compromise of one of their systems. The client had previously experienced an attack and expressed concerns that the same threat actor might be responsible for this latest incident. 
+
+The client’s Security Operations Centre (SOC) had already taken initial steps, identifying the compromised host, containing it, and capturing the necessary forensic evidence before reimaging the system. The provided evidence includes a raw disk image, a raw memory dump, and a network packet capture (PCAP) file.
+
+The objective of this investigation is to analyze the evidence to determine:
+
+1. **How the system was compromised:**
+   - Identification of the initial attack vector.
+   - The malicious document involved.
+   - The specific link that facilitated the compromise.
+
+2. **The extent of the compromise:**
+   - Detailed analysis of the second and third stages of the infection.
+   - Actions taken by the attacker on the compromised host.
+   - Identification of the Command and Control (C2) server used.
+   - Persistence mechanisms employed by the attacker.
+
+3. **Whether any data was exfiltrated:**
+   - Analysis of potential data theft from the host.
+
+This report will detail the findings from our investigation and provide a clear understanding of the scope and impact of the compromise.
+
 # **Technical Incident Report**
 
 ## **How Was the Computer Compromised?**
