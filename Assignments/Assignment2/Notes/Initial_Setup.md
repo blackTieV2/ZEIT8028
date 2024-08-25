@@ -1,4 +1,14 @@
-To find out the exact version of Windows and its release number from a memory capture using Volatility, follow these steps:
+## Machine Details
+
+- **Operating System**: Windows 10 Enterprise Evaluation (1809)
+- **System Root**: `C:\Windows`
+- **Current Build Number**: `17763`
+- **Edition**: Enterprise Evaluation
+- **Registered Owner**: int3rupt
+- **Install Date**: Approx. Unix Timestamp `1562812711`
+
+### Summary
+The compromised machine is running Windows 10 Enterprise Evaluation, registered to a user or organization named "int3rupt."
 
 ### 1. Set Up Your Environment
 First, make sure you are in the directory where Volatility's `vol.py` script is located.
@@ -69,8 +79,3 @@ This confirms that the system from which the memory was captured was running Win
 
 
 
-### Notes
-- Ensure you have Python 2 installed, as Volatility 2.x relies on it.
-- The exact path to your memory dump file and Volatility might differ, so adjust commands accordingly.
-
-By following these steps, you should be able to determine the exact version of Windows and its release number from your memory capture.
