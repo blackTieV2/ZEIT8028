@@ -176,7 +176,7 @@ Given the context in which `scvhost.exe` was found—within the `Temp` directory
 
 The discovery of `scvhost.exe` is a strong indicator of a significant compromise. Immediate action is required to contain and eradicate the threat, followed by a thorough investigation to understand the full extent of the attack and prevent future occurrences.
 
-## 
+## `procdump64.exe`
 ### Metadata
 ```text
 Metadata
