@@ -34,8 +34,6 @@ These IOCs should be integrated into the client’s security monitoring systems 
 | **Forensic Investigator**   | [z5470869@unsw.edu.au]   |
 | **Date Completed**          | [25 August 2024]       |
 
-You can fill in the specific details relevant to your case in the placeholders provided.
-
 ---
 
 # **Background**
