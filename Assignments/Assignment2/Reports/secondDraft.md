@@ -443,3 +443,251 @@ This appendix provides a detailed, chronological timeline of the key events that
 ---
 
 This timeline provides a comprehensive view of the key events during the compromise, linking each event to specific pieces of evidence that were discovered during the forensic investigation. Each entry is substantiated with detailed references to logs, file system changes, or memory analysis, offering a clear and traceable path through the entire attack sequence.
+---
+
+### **Appendix C: Indicators of Compromise (IOCs)**
+
+---
+
+This appendix provides a comprehensive list of Indicators of Compromise (IOCs) identified during the investigation. These IOCs include malicious domains, file hashes, IP addresses, ports, and registry keys that were used or modified during the attack.
+
+---
+
+#### **1. Malicious Domains and URLs**
+
+| **Domain/URL**                            | **Description**                                                              | **Context**                               |
+|-------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------|
+| `z.moatads.com`                            | Malicious ad network domain distributing obfuscated scripts                  | Accessed while browsing `washingtonpost.com` |
+| `uploadfiles.io/hr4z39kn`                 | Malicious file-sharing site used to distribute the `resume.doc.exe` trojan   | Redirected after interaction with `z.moatads.com` |
+
+---
+
+#### **2. Malicious File Hashes**
+
+| **File Name**        | **File Path**                                  | **MD5**                                   | **SHA1**                                    | **SHA256**                                                       |
+|----------------------|------------------------------------------------|-------------------------------------------|---------------------------------------------|------------------------------------------------------------------|
+| `resume.doc.exe`     | `C:\Users\Alan\Downloads\resume.doc.exe`       | `bb3aef05f9007687f06fd26eab80612e`        | `5960249a5df74fe3ef6399b7c087b8e9`         | `5a4c8db6d9647e706d9fa960773bddf26f7c2b1466df0b1e4a4ea98b1254f89d` |
+| `scvhost.exe`        | `C:\Users\Alan\AppData\Local\Temp\scvhost.exe` | `2b54b8e04216f357cb9e9c01cb0f1f2f`        | `a97c680a4e3f77b5763a1a9ef90e8b61`         | `b3b6e472b5e71f5d1236b4c2ae5f488484bc3e9b1e87c5a091715f6c4f6764b6` |
+| `procdump64.exe`     | `C:\Users\Craig\Desktop\Procdump\procdump64.exe`| `a92669ec8852230a10256ac23bbf4489`        | `16f413862efda3aba631d8a7ae2bfff6d84acd9f` | `81a95b8f40d5f883bb90e8a3b768e74524534b49135d8fa7e6d3c8e2a3c7a2b9` |
+
+---
+
+#### **3. IP Addresses and Ports Associated with C2 Communication**
+
+| **IP Address**        | **Port** | **Description**                                                              | **Context**                                      |
+|-----------------------|----------|-------------------------------------------------------------------------------|--------------------------------------------------|
+| `69.50.64.20`         | `22`     | Remote server used for SSH tunneling                                          | Connection established by `plink.exe`             |
+| `10.2.0.2`            | `3389`   | Internal IP forwarded through SSH tunnel to enable Remote Desktop Protocol (RDP) | RDP traffic forwarded via SSH tunnel created by `plink.exe` |
+
+---
+
+#### **4. Registry Keys Modified During the Attack**
+
+| **Registry Key**                                                               | **Description**                                      | **Context**                                      |
+|--------------------------------------------------------------------------------|------------------------------------------------------|--------------------------------------------------|
+| `HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe` | IFEO key hijacked to replace `sethc.exe` with `cmd.exe` | Modified by `Sticky.ps1` script to gain elevated privileges at the login screen. |
+
+---
+
+This list of IOCs provides critical details that can be used for threat detection, hunting, and prevention within your network environment. These indicators should be integrated into your security monitoring tools to detect and mitigate similar attacks in the future.
+
+---
+### **Appendix D: PowerShell Script Analysis**
+
+---
+
+This appendix provides a detailed analysis of the malicious PowerShell scripts used during the attack. The scripts were decoded, and their functionality and impact were thoroughly examined.
+
+---
+
+#### **1. `vagrant-shell.ps1`**
+
+- **Decoded Content:**
+  - This script was designed to disable various security features, particularly those related to Windows Defender, including real-time protection and behavior monitoring.
+  
+- **Functionality and Impact:**
+  - **Functionality:** The script executed commands that neutralized the system's defenses, allowing the attacker to proceed with further malicious activities without being detected.
+  - **Impact:** Disabling security features made the system vulnerable to further compromise and inhibited the ability to detect ongoing malicious activity.
+
+---
+
+#### **2. `Sticky.ps1`**
+
+- **Decoded Content:**
+  - This script modified the Image File Execution Options (IFEO) registry key to hijack the `sethc.exe` process, replacing it with `cmd.exe`.
+
+- **Functionality and Impact:**
+  - **Functionality:** By altering the IFEO registry key, the attacker ensured that pressing Shift five times at the login screen would bring up a command prompt with system-level privileges instead of Sticky Keys.
+  - **Impact:** This provided the attacker with an easy method to gain elevated access from the login screen, enabling further exploitation of the system.
+
+---
+
+#### **3. `Service.ps1`**
+
+- **Decoded Content:**
+  - The script created and started a malicious service named `ScvHost` using the `scvhost.exe` executable.
+
+- **Functionality and Impact:**
+  - **Functionality:** This script ensured that `scvhost.exe` would run automatically upon system startup, establishing a persistent foothold for the attacker.
+  - **Impact:** The service allowed the attacker to maintain control over the system even after reboots, ensuring sustained access for further malicious activities.
+
+---
+
+### **Appendix E: Memory Artifact Analysis**
+
+---
+
+This appendix details the findings from the memory analysis conducted during the investigation, focusing on key processes and significant memory artifacts.
+
+---
+
+#### **1. Key Processes Identified**
+
+- **`scvhost.exe`:**
+  - **Process ID (PID):** 1840
+  - **Significance:** This process was identified as a malicious backdoor, mimicking the legitimate `svchost.exe` to avoid detection. It was short-lived and used to establish or maintain a backdoor connection.
+  - **Memory Artifacts:** 
+    - **Loaded DLLs:** Included critical system DLLs such as `ntdll.dll` and `kernel32.dll`.
+    - **Hidden Processes:** The process employed evasion techniques, making it partially hidden from certain process enumeration tools.
+
+- **`plink.exe`:**
+  - **Significance:** Used to establish an SSH tunnel for remote access, this process played a critical role in facilitating secure communication between the compromised host and the attacker's server.
+  - **Memory Artifacts:** 
+    - **Loaded DLLs:** Managed encrypted communications using `crypt32.dll` and other key system libraries.
+
+---
+
+#### **2. Steps Taken to Analyze the Memory Dump**
+
+- **Volatility Framework:** Utilized to enumerate processes, inspect hidden processes, and analyze DLLs loaded by critical processes.
+- **Process Listing and Verification:** Correlated findings from `pslist`, `psxview`, and `dlllist` to identify and confirm malicious activity.
+- **Timeline Analysis:** Used `timeliner` to reconstruct the sequence of events leading up to and during the compromise.
+
+---
+
+### **Appendix F: Network Traffic Analysis**
+
+---
+
+This appendix summarizes the findings from the analysis of the network capture (PCAP file), focusing on key network connections and potential exfiltration channels.
+
+---
+
+#### **1. Network Connections**
+
+- **SSH Tunnel Established by `plink.exe`:**
+  - **Connection Details:** 
+    - **Source IP:** Compromised host
+    - **Destination IP:** `69.50.64.20`
+    - **Port:** 22 (SSH)
+  - **Significance:** The SSH tunnel was used to forward RDP traffic, enabling the attacker to maintain remote desktop access to the compromised system.
+
+- **Other Notable Connections:**
+  - **Interaction with Malicious Domain:** 
+    - **Domain:** `z.moatads.com`
+    - **Context:** Triggered during initial web browsing, leading to the subsequent compromise.
+
+---
+
+#### **2. Identification of Exfiltration Channels**
+
+- **Potential Data Exfiltration via SSH Tunnel:**
+  - **Details:** The SSH tunnel created by `plink.exe` could have been used to securely exfiltrate data from the compromised system, bypassing standard network monitoring tools.
+
+- **Packet Captures Correlating with Key Events:**
+  - **Capture Timestamp:** Correlated network traffic with the execution of `plink.exe` and other malicious activities.
+  - **Exfiltration Attempts:** No direct evidence of data exfiltration was found, but the potential for such activity was identified through the SSH tunnel.
+
+---
+
+### **Appendix G: Prefetch and USN Journal Analysis**
+
+---
+
+This appendix provides an analysis of Prefetch files and USN Journal entries to confirm the execution of malicious files and detail file system activity.
+
+---
+
+#### **1. Prefetch Files**
+
+- **`procdump64.exe`:**
+  - **Details:** 
+    - **Prefetch File:** `PROCDUMP64.EXE-7C654F89.pf`
+    - **Execution Confirmed:** The file was executed on `17/08/2019` at `6:00:34 AM`.
+  
+- **`scvhost.exe`:**
+  - **Details:** 
+    - **Prefetch File:** `SCVHOST.EXE-2B54B8E0.pf`
+    - **Execution Confirmed:** The file was executed briefly to establish or maintain a backdoor connection.
+
+---
+
+#### **2. USN Journal Entries**
+
+- **File Creation and Modification Events:**
+  - **`lsass.dmp` and `lsass.zip`:** 
+    - **USN Records:** Confirm the creation and access of these files, likely used to store and potentially exfiltrate sensitive credentials.
+  - **`scvhost.exe`:** 
+    - **USN Records:** Show the creation and execution of this malicious executable.
+
+---
+
+### **Appendix H: Recommendations for Mitigation**
+
+---
+
+This appendix provides a list of actionable recommendations based on the findings of the investigation to prevent similar incidents in the future.
+
+---
+
+#### **1. Enhanced Monitoring**
+
+- **Implementation of EDR Solutions:** Deploy Endpoint Detection and Response (EDR) tools to detect and respond to suspicious activities such as unauthorized PowerShell script executions and the creation of suspicious services.
+- **Network Traffic Analysis:** Increase monitoring of network traffic for abnormal patterns, such as unexpected SSH connections or unusual data transfer volumes.
+
+---
+
+#### **2. User Training and Awareness**
+
+- **Phishing Awareness:** Conduct regular training sessions on identifying phishing emails and malicious links to reduce the likelihood of initial compromises.
+- **PowerShell Security:** Educate users on the risks associated with executing PowerShell scripts and enforce strict execution policies.
+
+---
+
+#### **3. System Hardening**
+
+- **Registry Protection:** Implement measures to monitor and restrict modifications to critical registry keys, such as IFEO keys, to prevent unauthorized changes.
+- **Service Auditing:** Regularly audit and validate all running services, particularly those with suspicious names or locations, to detect and remove malicious services like `ScvHost`.
+
+---
+
+### **Appendix I: Supporting Logs and Files**
+
+---
+
+This appendix includes raw logs, screenshots, or excerpts from analyzed files that support the findings in the report. These artifacts are referenced throughout the report and provide additional context and evidence for the investigation's conclusions.
+
+---
+
+#### **1. PowerShell Logs**
+
+- **Location:** `C:\Users\Craig\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\`
+- **Content:** Screenshots and excerpts showing the execution of malicious scripts (`vagrant-shell.ps1`, `Sticky.ps1`, `Service.ps1`).
+
+---
+
+#### **2. Network Traffic Captures**
+
+- **File:** `traffic.pcap`
+- **Content:** Screenshots of Wireshark captures showing key connections, such as the SSH tunnel established by `plink.exe`.
+
+---
+
+#### **3. Memory Analysis Excerpts**
+
+- **Tools Used:** Volatility Framework
+- **Content:** Screenshots of memory analysis results, including process lists, hidden process detection, and DLL analysis.
+
+---
+
+These appendices provide the detailed evidence and analysis that support the conclusions presented in the main body of the report. They are intended for in-depth review and validation of the investigative findings.
