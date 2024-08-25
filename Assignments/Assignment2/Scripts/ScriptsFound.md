@@ -198,6 +198,7 @@ if (Test-Path -Path $path) {
     Start-Service -Name "ScvHost"
 }
 ```
+```text
 ### Metadata
 Name: /img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Temp/Service.ps1
 Type: File System
@@ -213,6 +214,7 @@ MD5: df94b76332ad29f2a93c7c7a5a1c7fcd
 SHA-256: 242f3af26875dc83622403c774e66c1072a83942fe31e41ce36a8c1bc63cbe3d
 Hash Lookup Results: UNKNOWN
 Internal ID: 14931
+```
 
 ## `ElevateExecute.ps1`
 ```powershell
@@ -243,6 +245,7 @@ Start-Sleep -Seconds 3
 Clear-ItemProperty -Path $path -Name "(Default)"
 Remove-ItemProperty -Path $path -Name "DelegateExecute"
 ```
+```text
 ### Metadata
 Name:
 /img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Temp/ElevateExecute.ps1
@@ -259,4 +262,4 @@ MD5: 9b70c59d1eff15b6ade571c9f445deb0
 SHA-256: ff749aafa6da72d5a7dfb244f6e89b6b141f861d7af70f3aba986b3cf26ce1c6
 Hash Lookup Results: UNKNOWN
 Internal ID: 14927
-
+```
