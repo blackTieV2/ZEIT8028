@@ -1,6 +1,7 @@
 ## `lsass.dmp`
 File that was created with `procdump.exe` 
 ### Metadata
+```text
 Name: /img_disk.raw/vol_vol7/Users/Craig/Desktop/Procdump/lsass.dmp
 Type: File System
 MIME Type: application/octet-stream
@@ -15,3 +16,4 @@ MD5: f74086848ff51007867959d16a46f422
 SHA-256: ddac19662740c0602258d6439a4b1199230caaf215a71daa3869b90556323446
 Hash Lookup Results: UNKNOWN
 Internal ID: 18046
+```
