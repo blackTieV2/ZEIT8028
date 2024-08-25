@@ -1,0 +1,6 @@
+import base64
+
+encoded_data = "UGFyYW0oCiAgICBbUGFyYW1ldGVyKE1hbmRhdG9yeT0kdHJ1ZSwKICAgIFZhbHVlRnJvbVBpcGVMaW5lPSRmYWxzZSldCiAgICBbU3RyaW5nW11dCiAgICAkVXJpLAoKICAgIFtQYXJhbWV0ZXIoTWFuZGF0b3J5PSR0cnVlLAogICAgVmFsdWVGcm9tUGlwZUxpbmU9JGZhbHNlKV0KICAgIFtTdHJpbmd
+"
+decoded_data = base64.b64decode(encoded_data)
+print(decoded_data.decode('utf-8'))
