@@ -44,6 +44,9 @@ http.host == "pastebin.com" && http.request.uri == "/raw/VeLUwUuq"
 ### **TCP Stream Analysis:**
 
 Using Wireshark’s "Follow TCP Stream" feature, the entire sequence of data exchanged during this session was examined. This included both the GET request and the HTTP response, where the Base64-encoded data was identified.
+```text
+tcp.stream eq 1894
+```
 
 ### **Base64 Decoding:**
 
