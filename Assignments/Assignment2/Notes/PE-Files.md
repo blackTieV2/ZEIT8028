@@ -176,3 +176,123 @@ Given the context in which `scvhost.exe` was found—within the `Temp` directory
 
 The discovery of `scvhost.exe` is a strong indicator of a significant compromise. Immediate action is required to contain and eradicate the threat, followed by a thorough investigation to understand the full extent of the attack and prevent future occurrences.
 
+## 
+### Metadata
+```text
+Metadata
+Name: /img_disk.raw/vol_vol7/Users/Craig/Desktop/Procdump/procdump64.exe
+Type: File System
+MIME Type: application/x-dosexec
+Size: 341672
+File Name Allocation: Allocated
+Metadata Allocation: Allocated
+Modified: 2017-04-25 04:37:46 UTC
+Accessed: 2019-08-17 06:01:04 UTC
+Created: 2017-04-25 04:37:46 UTC
+Changed: 2019-08-17 05:59:54 UTC
+MD5: a92669ec8852230a10256ac23bbf4489
+SHA-256: 16f413862efda3aba631d8a7ae2bfff6d84acd9f454a7adaa518c7a8a6f375a5
+Hash Lookup Results: UNKNOWN
+Internal ID: 18052
+```
+### **Technical Report: Detailed Analysis of `procdump64.exe` Execution and Evidence Collection**
+
+---
+
+#### **1. Introduction**
+This report provides an in-depth analysis of the execution of `procdump64.exe` used by an attacker to create a memory dump of the `lsass.exe` process. The analysis is based on artifacts extracted from the system, including Prefetch files, USN Journal entries, Jump Lists, LNK files, Shellbags, and `$LogFile` entries. These artifacts were meticulously examined to reconstruct the timeline and actions taken during the attack.
+
+#### **2. Analysis of Key Artifacts**
+
+##### **2.1 Prefetch Files**
+**Artifact Details:**
+- **Application Name:** `PROCDUMP64.EXE`
+- **Application Path:** `\VOLUME{01d5382712c52860-b2135219}\USERS\CRAIG\DESKTOP\PROCDUMP\PROCDUMP64.EXE`
+- **Run Count:** 1
+- **Last Run Time:** `17/08/2019 6:00:34 AM`
+- **Volume Name:** `VOLUME{01d5382712c52860-b2135219}`
+
+**Analysis:**
+The Prefetch file `PROCDUMP64.EXE-7C654F89.pf` confirms that `procdump64.exe` was executed on `17/08/2019` at `6:00:34 AM`. This was the first and only recorded run of the executable on this system. Prefetch files also indicate that this tool was used from the `C:\Users\Craig\Desktop\Procdump` directory.
+
+**Evidence Snippet:**
+```plaintext
+PROCDUMP64.EXE,\VOLUME{01d5382712c52860-b2135219}\USERS\CRAIG\DESKTOP\PROCDUMP\PROCDUMP64.EXE,1,17/08/2019 6:00:34 AM
+```
+
+##### **2.2 USN Journal Entries**
+**Artifact Details:**
+- **File Name:** `procdump64.exe`
+- **File Created:** `17/08/2019 5:59:54 AM`
+- **File Closed:** `17/08/2019 5:59:54 AM`
+- **MFT Record Number:** 125097
+
+**Analysis:**
+The USN Journal records the creation of `procdump64.exe` at `5:59:54 AM` on `17/08/2019`. The series of entries confirms that the file was created, modified, and closed within the same second, consistent with the extraction or initial preparation before execution.
+
+**Evidence Snippet:**
+```plaintext
+procdump64.exe,88763944,17/08/2019 5:59:54 AM,"The file or directory is extended (added to). The file or directory is created for the first time. The file or directory is closed.",125097
+```
+
+##### **2.3 Jump Lists**
+**Artifact Details:**
+- **Linked Path:** `C:\Users\Craig\Desktop\Procdump\lsass.zip`
+- **Last Accessed:** `17/08/2019 6:00:58 AM`
+- **Volume Serial Number:** `B2135219`
+
+**Analysis:**
+The Jump List entry indicates that the attacker likely created a ZIP file named `lsass.zip` in the `Procdump` directory. The timing correlates with the execution of `procdump64.exe`, suggesting that the memory dump of `lsass.exe` was subsequently compressed.
+
+**Evidence Snippet:**
+```plaintext
+C:\Users\Craig\Desktop\Procdump\lsass.zip,17/08/2019 6:00:54 AM,17/08/2019 6:00:58 AM
+```
+
+##### **2.4 LNK Files**
+**Artifact Details:**
+- **Linked Path:** `C:\Users\Craig\Desktop\Procdump\lsass.zip`
+- **Accessed Time:** `17/08/2019 6:00:58 AM`
+
+**Analysis:**
+The LNK file confirms that `lsass.zip` was accessed immediately after its creation. This suggests the attacker might have been preparing the file for exfiltration or further analysis.
+
+**Evidence Snippet:**
+```plaintext
+C:\Users\Craig\Desktop\Procdump\lsass.zip,17/08/2019 6:00:58 AM
+```
+
+##### **2.5 Shellbags**
+**Artifact Details:**
+- **Path:** `My Computer:{002641c6-0001-0026-efbe-1100000089a9}Procdump\`
+- **First Interaction Date/Time:** `17/08/2019 5:59:55 AM`
+- **Last Interaction Date/Time:** `17/08/2019 6:01:26 AM`
+
+**Analysis:**
+Shellbags indicate that the directory `Procdump` was accessed and navigated by the user or attacker between `5:59:55 AM` and `6:01:26 AM`. This aligns with the creation and usage of `procdump64.exe`.
+
+**Evidence Snippet:**
+```plaintext
+My Computer:{002641c6-0001-0026-efbe-1100000089a9}Procdump\,17/08/2019 5:59:55 AM,17/08/2019 6:01:26 AM
+```
+
+##### **2.6 $LogFile Analysis**
+**Artifact Details:**
+- **File Name:** `PROCDUMP64.EXE-7C654F89.pf`
+- **Creation Time:** `17/08/2019 6:00:36 AM`
+
+**Analysis:**
+The `$LogFile` records show the creation of the Prefetch file for `procdump64.exe`. The timing corroborates the Prefetch evidence, confirming the executable's first and only run.
+
+**Evidence Snippet:**
+```plaintext
+PROCDUMP64.EXE-7C654F89.pf,92111608,17/08/2019 6:00:36 AM,"The file or directory is extended (added to). The file or directory is created for the first time. The file or directory is closed."
+```
+
+### **3. Summary of Findings**
+The artifacts collectively provide strong evidence that `procdump64.exe` was used by the attacker to create a dump of the `lsass.exe` process on `17/08/2019`. The execution timeline is supported by multiple corroborating sources, including Prefetch files, USN Journal entries, Jump Lists, LNK files, Shellbags, and `$LogFile` records.
+
+### **4. Conclusion**
+The execution of `procdump64.exe` and subsequent actions, such as the creation of `lsass.zip`, demonstrate that the attacker sought to capture and potentially exfiltrate sensitive credential data from the `lsass.exe` process. This activity is well-documented through various system artifacts, each reinforcing the other in establishing a clear sequence of events.
+
+---
