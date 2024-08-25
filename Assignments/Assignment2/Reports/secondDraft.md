@@ -36,12 +36,12 @@ Here is a table that outlines the **Case Details**:
 
 | **Case Details**           |                                |
 |----------------------------|--------------------------------|
-| **Case Identifier**         | [Insert Case ID]               |
-| **Customer**                | [Insert Customer Name]         |
-| **Customer Contact**        | [Insert Customer Contact Name] |
-| **Date Engaged**            | [Insert Engagement Date]       |
-| **Forensic Investigator**   | [Insert Investigator's Name]   |
-| **Date Completed**          | [Insert Completion Date]       |
+| **Case Identifier**         | [2024-08-001]   |
+| **Customer**                | [int3rrupt]         |
+| **Customer Contact**        | [Ofir Reuveny] |
+| **Date Engaged**            | [18 August 2017]       |
+| **Forensic Investigator**   | [z5470869@unsw.edu.au]   |
+| **Date Completed**          | [25 August 2024]       |
 
 You can fill in the specific details relevant to your case in the placeholders provided.
 
