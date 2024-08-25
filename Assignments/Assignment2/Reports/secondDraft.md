@@ -20,8 +20,20 @@ Key Indicators of Compromise (IOCs) identified during the investigation include:
 - **Malicious Executables:** `resume.doc.exe`, `scvhost.exe`
 - **PowerShell Scripts:** `vagrant-shell.ps1`, `Service.ps1`
 - **Network Indicators:** SSH connections to IP `69.50.64.20` on port `22`
-
 These IOCs should be integrated into the client’s security monitoring systems to detect and prevent similar attacks in the future. Additionally, the client should consider enhanced monitoring of PowerShell activity and RDP traffic to prevent unauthorized remote access.
+---
+# **Case Details**:
+
+|----------------------------|--------------------------------|
+| **Case Identifier**         | [2024-08-001]               |
+| **Customer**                | [int3rrupt]         |
+| **Customer Contact**        | [Ofir Reuveny] |
+| **Date Engaged**            | [18 August 2017]       |
+| **Forensic Investigator**   | [z5470869@unsw.edu.au]   |
+| **Date Completed**          | [25 August 2024]       |
+
+
+
 ---
 
 # **Background**
