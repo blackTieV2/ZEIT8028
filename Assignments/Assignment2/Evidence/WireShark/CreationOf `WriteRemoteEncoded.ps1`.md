@@ -1,4 +1,4 @@
-## Artifact Record: Base64-Encoded Script Download via Pastebin
+## Creation of `WriteRemoteEncoded.ps1`
 
 ### **Objective:**
 Identify and decode the Base64-encoded script downloaded from Pastebin during the observed TCP session and verify its role in the creation of the `WriteRemoteEncoded.ps1` script.
