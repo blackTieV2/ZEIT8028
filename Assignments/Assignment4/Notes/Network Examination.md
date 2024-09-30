@@ -58,3 +58,42 @@ Here's the refined list of findings and analysis with the specific **Wireshark f
 4. **Local PowerShell Log Review**: Since network traces of PowerShell were not found, local logs could provide evidence of script execution and objectives.
 
 This structured approach will help in piecing together the full scope of the network compromise and guide further remediation and forensic steps.
+
+The analysis of the HTTP traffic related to Minesweeper-related websites shows the following:
+
+### HTTP Requests to Minesweeper-related Websites
+1. **Initial Access**:
+   - **Request**: `GET / HTTP/1.1`
+   - **Time**: `2019-10-14 04:23:55.503147`
+   - **Destination IP**: `159.203.227.72`
+   - **Details**: This is the initial request to the homepage of a Minesweeper-related site.
+
+2. **Resource Downloads**:
+   - **Request**: `GET /minesweeper.min.css?v=1524360431 HTTP/1.1`
+   - **Time**: `2019-10-14 04:23:55.799455`
+   - **Destination IP**: `159.203.227.72`
+   - **Details**: This request downloads a CSS file, indicating the page was likely fully rendered, suggesting active user interaction with the site.
+   
+   - **Request**: `GET /minesweeper.min.js?v=1524360431 HTTP/1.1`
+   - **Time**: `2019-10-14 04:23:55.810645`
+   - **Destination IP**: `159.203.227.72`
+   - **Details**: A JavaScript file download, further supporting the active rendering of the page and possible execution of scripts.
+
+3. **Additional Resource Requests**:
+   - **Request**: `GET /app_store_badge.svg HTTP/1.1`
+   - **Time**: `2019-10-14 04:23:56.074809`
+   - **Destination IP**: `159.203.227.72`
+   - **Details**: Request for an image file, part of typical web page assets, showing more detailed user engagement with the website.
+
+   - **Request**: `GET /flag.png HTTP/1.1`
+   - **Time**: `2019-10-14 04:23:56.076609`
+   - **Destination IP**: `159.203.227.72`
+   - **Details**: Another image request, completing the picture of a typical web browsing session to these gaming sites.
+
+### Analysis and Next Steps:
+- **Engagement Confirmation**: These logs confirm that the user actively engaged with Minesweeper-related sites, not merely landing on these pages but interacting in a manner that suggests genuine browsing or gameplay. This provides context to the browsing behavior prior to the malware download, which could be an essential aspect of understanding the attack vector if these sites were compromised or used malicious advertising.
+  
+- **Further Validation**: To connect this activity directly to the malware incident, correlate these site visits with the timing of the malware download attempts. Look for any subsequent requests to suspicious or unrelated sites that could indicate redirection or drive-by download attacks.
+
+- **Deeper Investigation**: Examine server logs, if available, or use more detailed network monitoring tools to see if any of these sites served malicious content either via compromised advertisements or through direct page content modifications.
+
