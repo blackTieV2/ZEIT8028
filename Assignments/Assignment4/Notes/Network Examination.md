@@ -95,5 +95,21 @@ The analysis of the HTTP traffic related to Minesweeper-related websites shows t
   
 - **Further Validation**: To connect this activity directly to the malware incident, correlate these site visits with the timing of the malware download attempts. Look for any subsequent requests to suspicious or unrelated sites that could indicate redirection or drive-by download attacks.
 
-- **Deeper Investigation**: Examine server logs, if available, or use more detailed network monitoring tools to see if any of these sites served malicious content either via compromised advertisements or through direct page content modifications.
+
+---
+
+
+### 2. **Wireshark Filter Results**
+
+   - **Filter: `ip.addr == 31.130.160.131 && tls.handshake.type == 11`**:
+     - **Result**: 201 packets.
+     - **Interpretation**: These packets indicate a TLS handshake involving the exchange of certificates between the local machine and IP `31.130.160.131`. This suggests encrypted communication between the victim and this potentially malicious server, likely indicating an established TLS session, which could be for command-and-control (C2) or exfiltration.
+
+### 3. **Filter: `http.request.uri contains "Minesweeperz.exe" || dns.qry.name contains "filebin.net"`**
+   - **Result**: 3 packets.
+   - **Frame Example**:
+     - Frame `70662` and `70673` show DNS queries to `filebin.net`, which returned the IP address `185.47.40.36`.
+   - **Interpretation**: This DNS query indicates that the local machine resolved the `filebin.net` domain to the IP `185.47.40.36` around the time of the infection. This reinforces that `filebin.net` was likely involved in delivering `Minesweeperz.exe`, and the DNS query suggests this was a part of the infection process. 
+
+   - **Analysis**: These DNS packets, along with the HTTP requests, could help establish a timeline of the infection, tying the download of the malware to the interaction with `filebin.net`. If `185.47.40.36` is found to be involved in malicious activity or hosting malware, this strengthens the case for the involvement of `filebin.net` in the infection chain.
 
