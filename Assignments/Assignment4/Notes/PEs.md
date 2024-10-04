@@ -48,7 +48,7 @@ Prefetch - Victim 1 - Disk and Memory
 
 ---
 
-### Log Record for `P.exe`
+## Log Record for `P.exe`
 
 #### File Information:
 - **File Name**: P.exe
@@ -95,7 +95,7 @@ The file `P.exe` is likely part of the post-exploitation toolkit used by the att
 
 ---
 
-### Log Record for `Minesweeperz.exe`
+## Log Record for `Minesweeperz.exe`
 
 #### File Information:
 - **File Name**: Minesweeperz.exe
