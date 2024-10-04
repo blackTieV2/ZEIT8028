@@ -113,3 +113,14 @@ The analysis of the HTTP traffic related to Minesweeper-related websites shows t
 
    - **Analysis**: These DNS packets, along with the HTTP requests, could help establish a timeline of the infection, tying the download of the malware to the interaction with `filebin.net`. If `185.47.40.36` is found to be involved in malicious activity or hosting malware, this strengthens the case for the involvement of `filebin.net` in the infection chain.
 
+### IP address 185.47.40.36, which corresponds to filebin.net
+```bash
+ip.addr == 185.47.40.36 && (http.request.uri contains "Minesweeperz.exe" || tls.handshake.extensions_server_name contains "filebin.net")
+```
+Excellent! From the results, we can see that there are **7 packets** of **TLS Client Hello** messages sent to the IP address **185.47.40.36**, which corresponds to `filebin.net`. This confirms a strong connection to this domain, supporting the evidence of malicious traffic tied to the **Minesweeperz.exe** download.
+
+### What does this tell us?
+1. **Client Hello (TLS Handshake)**: Each of these packets is part of a TLS handshake, indicating that the compromised system is attempting to establish a secure connection with `filebin.net`. 
+2. **SNI (Server Name Indication)**: The packets show that the **Server Name Indication (SNI)** points directly to `filebin.net`, which aligns with the download of `Minesweeperz.exe` from this domain.
+3. **Timing**: These communications happen **right after the DNS queries** for `filebin.net`, as seen in the previous analysis, further reinforcing that this domain is central to the compromise.
+
