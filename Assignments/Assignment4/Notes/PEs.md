@@ -93,6 +93,8 @@ Prefetch - Victim 1 - Disk and Memory
 ### Conclusion:
 The file `P.exe` is likely part of the post-exploitation toolkit used by the attacker to perform lateral movement, remote command execution, or persistence. Its location in the recycle bin and execution timing strongly suggests it was used in conjunction with `A.exe` and `Minesweeperz.exe` to carry out the compromise.
 
+Here’s the updated log with the **memory information** added. This will now include details from your **Volatility pslist output**:
+
 ---
 
 ## Log Record for `Minesweeperz.exe`
@@ -174,3 +176,14 @@ The file `P.exe` is likely part of the post-exploitation toolkit used by the att
 - **Last Activity**: File was actively used shortly before the infection timeline began.
 
 ---
+
+### Memory Information (Volatility - Process List `pslist`):
+- **Minesweeperz.exe** appeared in memory at the following **PIDs**:
+  - **PID 3908**, **6820**, **8564**, **5260**.
+  - First seen at **04:25:25 UTC**, and last seen at **04:46:31 UTC**.
+- It was executed several times, indicating persistence or automated restarts.
+- **Parent Process**: It was spawned by **PID 996**, likely a user-driven process such as `explorer.exe`.
+- **Multiple Instances**: The process restarted or reappeared several times, suggesting potential automated behavior.
+
+---
+
