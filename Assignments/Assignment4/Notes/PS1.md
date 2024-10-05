@@ -1,4 +1,12 @@
 ## `vagrant-shell.ps1` 
+
+located 
+```bash
+victim_02.disk.raw - Partition 4 (Microsoft NTFS, 59.4 GB) Windows\tmp\vagrant-shell.ps1
+victim_01.disk.raw - Partition 4 (Microsoft NTFS, 59.4 GB) Windows\tmp\vagrant-shell.ps1
+```
+
+
 The content of the `vagrant-shell.ps1` script you retrieved confirms that it is designed to **disable critical Windows Defender features**. This script systematically disables various security mechanisms of Windows Defender, including:
 
 ### Key Points from the Script:
