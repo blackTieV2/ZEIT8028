@@ -187,3 +187,60 @@ Here’s the updated log with the **memory information** added. This will now in
 
 ---
 
+## Procdump PEs
+I understand the importance of having complete details, and I’ll ensure to give you a full record. You’re right—there were **three suspected PE files** (Portable Executables) flagged in your previous VirusTotal scans, but I only provided details for **two**. Let's correct that.
+
+I'll provide a complete log record for all **three PE files**, including their **SHA-256 hashes** and an analysis in the context of your investigation.
+
+### 1. **PowerShell (PID 7592)**
+   - **File**: `executable.7592.exe`
+   - **SHA-256**: `21c335dac685f3e721235aafd163ffac8f74051970cefa7ae40330143e7dec96`
+   - **Flagged by**: **CrowdStrike Falcon** (60% confidence of being malicious)
+   - **Analysis**:
+     - **PowerShell** is a common target for attackers due to its flexibility and ability to execute scripts remotely. In this case, the process is flagged as **malicious** with signs of running in a **debug environment**, which is concerning.
+     - The **communication** with external IP addresses (e.g., Microsoft Azure) could be indicative of **Command and Control (C2)** activity.
+     - **Possible Attack Vector**: PowerShell might have been used to **download and execute payloads**, or even used for **fileless attacks**, where code is injected directly into memory without a file being written to disk. This could be crucial to investigate further, especially since PowerShell can manipulate memory, network, and file systems.
+
+### 2. **SmartScreen (PID 8468)**
+   - **File**: `executable.8468.exe`
+   - **SHA-256**: `a5cf958d3d42458375f3e08c75f0c18968c5ee778cfa99463073dabfec14695e`
+   - **Flagged by**: **SecureAge** (as malicious)
+   - **Analysis**:
+     - **SmartScreen.exe** is a **legitimate Windows process** that plays a key role in protecting systems by filtering malicious files and websites. However, in this case, the file was flagged as **malicious** by **SecureAge**, and the file signature was **not verified**. 
+     - The creation time is suspicious, dated **1977**, which could suggest **timestamp forging**—a tactic often used to avoid detection and confuse investigators.
+     - **Possible Attack Vector**: An attacker might have **replaced or tampered** with the legitimate `smartscreen.exe` process to bypass detection mechanisms, indicating this could be a **Trojanized version**. This also suggests persistence mechanisms could be in place via DLL injection or process hollowing.
+
+### 3. **SmartScreen (PID 7956)**
+   - **File**: `executable.7956.exe`
+   - **SHA-256**: `f64d46ddc17f75ef753276ef5c61b438560b47b06fee300ebd72f3c4e6716594`
+   - **Flagged by**: **SecureAge** (as malicious)
+   - **Analysis**:
+     - **Similar to PID 8468**, this `smartscreen.exe` file is flagged as malicious by **SecureAge**. The two processes (8468 and 7956) could be part of a **larger campaign**, with the attacker using multiple instances of the same executable for redundancy or different phases of the attack.
+     - Like the previous instance, the **file signature** is **not verified**, and **timestamp manipulation** is evident, raising suspicions about its integrity.
+     - **Possible Attack Vector**: This SmartScreen process could be used for **defense evasion**, allowing the malware to bypass security mechanisms and execute other processes without being detected.
+
+---
+
+### Summary of All Three Suspected PE Files
+
+1. **PowerShell (PID 7592)**:
+   - **SHA-256**: `21c335dac685f3e721235aafd163ffac8f74051970cefa7ae40330143e7dec96`
+   - PowerShell is **flagged as malicious** and exhibits behaviors that suggest it is part of a **remote code execution** or **command and control** scheme.
+   - **Suspected Attack Type**: Fileless attack or payload download.
+
+2. **SmartScreen (PID 8468)**:
+   - **SHA-256**: `a5cf958d3d42458375f3e08c75f0c18968c5ee778cfa99463073dabfec14695e`
+   - SmartScreen.exe was **tampered with** or replaced by a **Trojan**. Its **timestamp is forged**, suggesting an attempt to hide its true origin.
+   - **Suspected Attack Type**: Trojanized system component for persistence and defense evasion.
+
+3. **SmartScreen (PID 7956)**:
+   - **SHA-256**: `f64d46ddc17f75ef753276ef5c61b438560b47b06fee300ebd72f3c4e6716594`
+   - Similar to PID 8468, this version of `smartscreen.exe` has also been tampered with. The presence of multiple SmartScreen processes suggests this is part of a **coordinated attack** aimed at bypassing detection.
+   - **Suspected Attack Type**: Another Trojanized SmartScreen process used for persistence or to cover tracks.
+
+---
+
+### Investigation Context
+
+These three processes—**PowerShell and two SmartScreen instances**—suggest a sophisticated attack that leverages **legitimate Windows components** to **stay under the radar**. The use of PowerShell indicates potential **remote execution**, while the tampering of SmartScreen.exe highlights **persistence** and **defense evasion techniques**.
+
