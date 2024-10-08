@@ -62,4 +62,60 @@ To build on the log you've shared, let's add further insights from the packet ca
 - **Host Review**: Focus on the system `10.2.0.10` during the observed traffic windows. Any malicious processes tied to the **TLS sessions** will help clarify the scope of the breach.
 - **Expanded Network Analysis**: Look for additional outbound communications or lateral movement linked to other internal systems.
 
-This updated log report expands on your initial findings with greater detail into the TLS handshake, alert signals, and potential implications regarding data exfiltration or C2 communications. Let me know if further packet analysis or host forensic investigation is needed!
+Here are the log records for the **three IP addresses** involved in the investigation based on their detection and analysis:
+
+---
+
+### **Log Record for IP Address: 52.229.207.60**
+
+#### **Summary:**
+- **IP Address**: 52.229.207.60
+- **Owner**: Microsoft Corporation
+- **ISP**: Microsoft Corporation (MSN-AS-BLOCK)
+- **Location**: Hong Kong
+- **Confidence of Abuse**: 0% (whitelisted, no abuse reports)
+  
+#### **Analysis:**
+- This IP address is associated with **Microsoft Corporation's services** and shows no signs of malicious activity according to both **VirusTotal** and **AbuseIPDB** reports. The **zero detections** suggest that this IP is likely part of legitimate cloud hosting infrastructure (e.g., **Azure** or other Microsoft services).
+  
+- **Relevance**: Since it's a Microsoft-owned IP, it's possible that communication with this IP was part of standard system operations, updates, or cloud service interactions, rather than a direct indicator of compromise.
+
+---
+
+### **Log Record for IP Address: 117.18.232.240**
+
+#### **Summary:**
+- **IP Address**: 117.18.232.240
+- **Owner**: EdgeCast Networks (Content Delivery Network)
+- **ISP**: EdgeCast Networks (AS15133)
+- **Location**: United States (Thousand Oaks, California)
+- **Confidence of Abuse**: 0% (minimal abuse reports, considered **whitelisted**)
+- **Abuse Reports**: Four reports between March 2021 and March 2023, linked to DDoS attacks and suspicious traffic.
+  
+#### **Analysis:**
+- **Historical Reports**: In the past, this IP has been associated with **DDoS attacks** and **outbound requests** containing suspicious patterns. The most recent report was from **nine months ago**.
+  
+- **Relevance**: While the current IP is largely whitelisted, the previous history of attacks raises some concerns about its past use for malicious activities. This IP may have been involved in **data exfiltration** or **C2 (Command and Control)** activity depending on what services were active during the time Minesweeperz.exe was running.
+
+---
+
+### **Log Record for IP Address: 172.217.167.67**
+
+#### **Summary:**
+- **IP Address**: 172.217.167.67
+- **Owner**: Google LLC
+- **ISP**: Google LLC (AS15169)
+- **Location**: Sydney, New South Wales, Australia
+- **Confidence of Abuse**: 0% (minimal abuse, detected by only one AV tool)
+  
+#### **Analysis:**
+- **Previous Activity**: This IP is tied to Google's services and, in the past, was linked to **phishing** and **web spam** (with one report from one year ago). Although the IP is largely considered **clean**, any suspicious activity would be tied to specific services running under Google infrastructure (like **Google Cloud**).
+  
+- **Relevance**: Similar to the first IP, this address likely belongs to **Google's cloud services**. However, given the **phishing history** of this IP, it’s worth investigating further to see if any suspicious data flows occurred during the time Minesweeperz.exe ran.
+
+---
+
+### Conclusion:
+These IP addresses are part of legitimate infrastructure (Microsoft and Google). However, the **117.18.232.240** IP shows some past malicious activity, and should be analyzed further in the context of possible **C2 traffic** or data transfers initiated by Minesweeperz.exe. For the next steps, logs and further traffic analysis will help solidify whether any of these IPs were used for malicious purposes.
+
+Now that you have the log records, let me know if you want to proceed with analyzing **Victim 2's SRUM logs and Event logs** for process creation.
