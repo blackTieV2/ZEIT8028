@@ -244,3 +244,112 @@ I'll provide a complete log record for all **three PE files**, including their *
 
 These three processes—**PowerShell and two SmartScreen instances**—suggest a sophisticated attack that leverages **legitimate Windows components** to **stay under the radar**. The use of PowerShell indicates potential **remote execution**, while the tampering of SmartScreen.exe highlights **persistence** and **defense evasion techniques**.
 
+---
+
+## **`PSEXESVC.exe`** 
+
+---
+
+### **File: PSEXESVC.exe**
+- **Size**: 158.66 KB (162464 bytes)
+- **File Type**: PE32+ executable (console) x86-64, for MS Windows
+- **MD5**: `ae5bb9f3fff1aeaaad619bab105b2391`
+- **SHA-1**: `f1e36e0e34276a5015040780e14b58efd1112b76`
+- **SHA-256**: `224f549f33854ed53667055786dc1073e64b7428fae26f27dab9828ed502bb99`
+- **Compilation Timestamp**: 2016-06-28 18:39:41 UTC
+- **First Submission**: 2016-06-30
+- **Last Analysis Date**: 2024-09-30
+- **PE Header**: 64-bit executable
+
+---
+
+### **VirusTotal Scan Result**
+- **SHA-256 Hash**: `224f549f33854ed53667055786dc1073e64b7428fae26f27dab9828ed502bb99`
+- **Community Score**: 1/73 security vendors flagged this file as malicious.
+- **Detection Date**: Last analyzed 7 days ago (2024-09-30)
+- **Detection Ratio**: 1/73 (flagged as malicious by one vendor)
+  
+  - **Names Used in VirusTotal**:  
+    - psexesvc.exe  
+    - PsExec Service Host  
+    - mcafee_services.exe  
+    - AllWindows.Persistence.Wow64cpu.csv  
+    - Google.exe  
+    - SagSvc.exe  
+    - hisocimcheckingourpkiprivileges.exe  
+    - PSPSEXEC1.exe
+
+---
+
+### **File Version Information**
+- **Original Name**: `psexesvc.exe`
+- **Product**: Sysinternals PsExec
+- **Description**: PsExec Service
+- **Version**: 2.2
+- **Copyright**: © 2001-2016 Mark Russinovich
+- **Signed File**: Yes, **valid signature**
+  - **Signature Date**: 2016-06-28
+  - **Signers**:  
+    - Microsoft Corporation  
+    - Microsoft Code Signing PCA  
+    - Microsoft Root Certificate Authority  
+    - Microsoft Time-Stamp Service  
+
+---
+
+### **Portable Executable (PE) Information**
+- **Compiler**: Microsoft Visual C/C++ (18.00.31101)
+- **Linker**: Microsoft Linker (12.00.31101)
+- **Sections**:
+  - `.text`: Virtual Address: 4096, Size: 72 KB, MD5: `492d442ef26d4ce2c163f6107c5392ba`
+  - `.rdata`: Virtual Address: 77824, Size: 59 KB, MD5: `a32ff33ed8de729426d3e90168af4941`
+  - `.data`: Virtual Address: 139264, Size: 147 KB, MD5: `38998c83dc87a647e0f654025e5bd606`
+  - `.pdata`: Virtual Address: 286720, Size: 3.46 KB, MD5: `4e6902c630effaa349b4c6ef9571bcaf`
+  - `.rsrc`: Virtual Address: 290816, Size: 1.52 KB, MD5: `88e204a85baa5469b1543eb01f41b3b2`
+
+---
+
+### **Process Information**
+- **Associated PID**: 728
+- **Parent Process**: `services.exe` (PID: 596)【432:0†source】【432:10†source】
+- **Service Name**: `PSEXESVC`
+- **Binary Path**: `C:\Windows\PSEXESVC.exe`
+- **Start Type**: Demand start (manual)【432:13†source】
+- **Service Install Time**: 2019-10-14 at 04:37:20 UTC【432:13†source】
+- **Account Used**: LocalSystem【432:13†source】
+- **Running Status**: Service was in the **Running** state when discovered【432:10†source】.
+
+---
+
+### **VirusTotal Detection Information**
+- **One Detection**:
+  - **Malicious Vendor**: 1 out of 73 flagged the file as suspicious, while others considered it benign.
+  - **SSDEEP**: `3072:gOv9OC9TsDmtXV0MzaTeBfkGbqKF5UFxgelISev5SlYAEQv:Lvf6sSMWTk7bjgxdO5mv`
+  - **TLSH**: `T13BF3395763F820E9E5B3AB3489B15512EB367C725B34D74E1260416E0FB2B90ED39B32`
+
+---
+
+### **Additional Indicators from VirusTotal**
+- **VHash**: `015066651d15551553c8z59hz13z8fz`
+- **Authentihash**: `c7b39998dfe03b1d49b673226b5072886b7f1f20f1fa0bc6fa0934baccea2e1e`
+- **Imphash**: `09d5553d2aa2f39bde811b88883de7d5`
+- **Rich PE Header Hash**: `682fedc74186068171eb10355eaec7ba`
+- **Magic**: `PE32+ executable (console) x86-64, for MS Windows`
+
+---
+
+### **History and Timestamps**
+- **File Creation Time**: 2016-06-28 at 18:39:41 UTC
+- **Signature Date**: 2016-06-28 at 18:39:00 UTC
+- **First Seen in the Wild**: 2015-11-12 at 01:03:06 UTC
+- **Last Submission**: 2024-08-05
+- **Last Analysis Date**: 2024-09-30 
+
+---
+
+### **Other Relevant Findings from Memory and Process Dumps**:
+- The file `PSEXESVC.exe` was linked to **Windows Event Logs**, notably under Event ID 7045, as a newly installed service【432:13†source】【432:15†source】.
+- Various instances of **svchost.exe** (generic Windows service processes) were found active around the same time as `PSEXESVC.exe`【432:17†source】.
+
+---
+
