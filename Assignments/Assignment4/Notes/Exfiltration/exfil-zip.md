@@ -1,6 +1,4 @@
-From your provided details and artifacts, here’s the current summary and analysis of the situation involving the file `exfil.zip` and its connection to possible exfiltration efforts on the system. This analysis is based on the SAM and SYSTEM files extracted from the ZIP file, hex analysis, and associated artifacts.
-
-## Summary of Findings for `exfil.zip` from Autopsy
+## Details of Findings for `exfil.zip` from Autopsy
 
 #### 1. **SAM and SYSTEM Files**:
    - **SAM File Header**:
