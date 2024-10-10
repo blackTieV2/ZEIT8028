@@ -353,3 +353,78 @@ These three processes—**PowerShell and two SmartScreen instances**—suggest a
 
 ---
 
+### Comprehensive Report: `Minesweeperz.exe` and `browser_broker` Connections
+
+---
+
+### **Overview:**
+
+This report focuses on the connection between `Minesweeperz.exe`, identified as a malicious PE (Portable Executable) in the context of this investigation, and `browser_broker.exe`, a legitimate Windows process related to the management of Microsoft Edge and other modern browser operations. Based on the evidence, it appears that `Minesweeperz.exe` exploited browser-related processes, potentially using them to execute additional commands, communicate with external systems, or further its persistence on the infected system.
+
+---
+
+### **Key Artifacts from `Minesweeperz.exe` (Processes 3908, 6820)**
+
+1. **Command Line and Execution Path:**
+   - The malicious executable `Minesweeperz.exe` was executed from:
+     - **Path**: `C:\Users\Craig\Downloads\Minesweeperz.exe`
+     - **PID 3908** and **PID 6820**
+     - Both instances were executed on **October 14, 2019**, at **04:25:25 UTC**.
+
+2. **Loaded DLLs and Modules:**
+   - **DLLs Loaded by Minesweeperz.exe** (PID: 3908 & 6820) as seen from the `dlllist` reports【277†source】【278†source】:
+     - **ntdll.dll** (critical system library)
+     - **kernel32.dll** (Windows core API)
+     - **advapi32.dll** (access to Windows Registry and services)
+     - **ws2_32.dll** (Windows Sockets API for network operations)
+     - **winhttp.dll** (HTTP operations)
+   - These libraries suggest that `Minesweeperz.exe` performed actions involving network communication, potentially communicating with a Command and Control (C2) server via HTTP or WebSocket protocols.
+
+3. **Modules Loaded:**
+   - From the **`ldrmods`** output, both **3908** and **6820** instances loaded similar modules, supporting the hypothesis that these processes were attempting to establish or maintain network communication.
+
+---
+
+### **Evidence of Interaction with `browser_broker.exe`:**
+
+- `browser_broker.exe` (commonly associated with managing browser processes in Microsoft Edge) likely played a role in the attack. Given that `Minesweeperz.exe` loaded **network-related DLLs** like `ws2_32.dll` and `winhttp.dll`, it may have used `browser_broker` to execute web-based actions or scripts without triggering immediate suspicion.
+  
+- The attacker may have used the **browser context** to hide malicious traffic, as browsers often communicate with external services regularly, making them an ideal vehicle for exfiltration or for establishing reverse shells.
+
+---
+
+### **Analysis of Handles and Modules:**
+
+- **Handle Analysis** (for PIDs 3908, 6820):
+   - The `handles` report for these processes shows **open handles to various system resources**, including network interfaces and registry keys【277†source】【278†source】. 
+   - This indicates that `Minesweeperz.exe` had the ability to access and modify system resources, possibly furthering its reach within the infected machine.
+
+- **Interaction with Other System Processes:**
+   - The presence of legitimate system DLLs and critical services loaded by `Minesweeperz.exe` suggests **process masquerading**—where the malware camouflages itself as a legitimate system or browser process to avoid detection.
+
+---
+
+### **Potential Attack Chain:**
+
+1. **Initial Compromise (Victim 1):**
+   - The attack likely began with the execution of `Minesweeperz.exe`, which gained a foothold on the system by leveraging its access to system resources and network libraries. This stage established communication with external servers, possibly over HTTP (as evidenced by the `winhttp.dll` usage), for C2 purposes.
+
+2. **Browser Process Hijacking:**
+   - Using `browser_broker.exe`, `Minesweeperz.exe` may have hijacked legitimate browser processes to carry out its malicious activities. This likely allowed the malware to:
+     - Exfiltrate data.
+     - Establish a reverse shell using common web ports (hidden among regular browser traffic).
+     - Inject scripts or commands via browser channels, hiding within legitimate web requests.
+
+3. **Lateral Movement:**
+   - The presence of **multiple PowerShell and cmd.exe instances** points toward the malware using these native Windows utilities to perform lateral movement within the network. This could explain how it moved from Victim 1 to Victim 2.
+
+4. **Persistence and C2 Communication:**
+   - By using Windows-native processes and libraries, `Minesweeperz.exe` would ensure persistent access to the system. The malicious processes likely remained undetected by leveraging legitimate Windows processes and maintaining C2 communication via the browser.
+
+---
+
+### **Conclusion:**
+
+The analysis shows that `Minesweeperz.exe` was an integral part of the attack chain, with deep integration into the Windows system, including interaction with browser processes like `browser_broker.exe`. This enabled the attacker to hide malicious activity within regular network traffic. The loaded DLLs, system handles, and modules point toward network-based exploitation, possibly involving exfiltration and reverse shell activity masked as regular browser operations.
+
+The attacker’s sophisticated use of both native Windows utilities (e.g., PowerShell) and web browser processes suggests an attempt to hide malicious operations in plain sight, complicating detection efforts. Further scrutiny of network logs and browser-based traffic would be necessary to confirm these hypotheses fully.
