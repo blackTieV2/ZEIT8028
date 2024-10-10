@@ -1,3 +1,4 @@
+## Vic 1
 ### **Detailed Report on Prefetch Analysis of `a.exe`, `p.exe`, and `Minesweeperz.exe`**
 
 #### **Artifact Overview:**
@@ -180,5 +181,114 @@ There is no direct evidence in the prefetch data that suggests any malicious act
 
 
 ---
+
+### **Detailed Report on Prefetch Analysis of SDELETE64.EXE**
+
+#### **Artifact Overview:**
+This report focuses on the analysis of the prefetch file for `SDELETE64.EXE` from Victim 2's system. `SDELETE64.EXE` is a command-line utility from Sysinternals, used for securely deleting files. This tool is commonly employed in both legitimate and malicious activities where attackers want to securely wipe traces of their activity by overwriting files before deletion. The analysis provides a comprehensive overview of the execution details, files accessed, and the system interactions.
+
+#### **Executable Overview:**
+- **Executable Name**: `SDELETE64.EXE`
+- **Hash**: `C877120F`
+- **File Size**: 21,950 bytes
+- **Version**: Windows 10/11 compatible
+- **Run Count**: 2 (Executed twice)
+- **Last Run Time**: **October 9, 2019, at 10:18:52 PM (UTC)**
+- **Previous Run Time**: **October 9, 2019, at 08:14:23 PM (UTC)**
+- **Source File Path**: `C:\\USERS\\ALAN\\APPDATA\\LOCAL\\TEMP\\SDELETE64.EXE`
+
+#### **Key Findings:**
+
+1. **Execution Timeline:**
+   - `SDELETE64.EXE` was executed twice on the same day. The last run occurred at **10:18:52 PM**, following a previous execution at **08:14:23 PM**. 
+   - The gap between these two execution times suggests potential manual involvement, or possibly automated scheduled tasks.
+
+2. **Files Accessed During Execution:**
+   - During its execution, the prefetch analysis reveals several critical system files and libraries were accessed:
+     - **System Libraries**:
+       - `NTDLL.DLL`: Essential for interacting with Windows APIs.
+       - `KERNEL32.DLL`, `KERNELBASE.DLL`: Critical for process and memory management.
+       - `USER32.DLL`, `GDI32.DLL`: Related to user interface components.
+     - **Temporary File Access**:
+       - `SDELETE64.EXE` was found in the `TEMP` folder of the user **Alan** at `C:\\USERS\\ALAN\\APPDATA\\LOCAL\\TEMP\\SDELETE64.EXE`. The tool's placement in this directory suggests it may have been downloaded or transferred to this location temporarily before execution.
+
+3. **Volume Information:**
+   - **Volume Serial Number**: `A2E60E11`
+   - **Volume Path**: The execution originated from the system’s main volume containing the operating system and user directories:
+     - `C:\\VOLUME{01d57f73e5f614a0-a2e60e11}\\USERS\\ALAN\\APPDATA`
+   - This path indicates that the execution was tied to the user **Alan**, raising questions about whether the user initiated the execution manually or if this was part of an attacker’s toolkit.
+
+4. **Files and Libraries Loaded:**
+   - **System Libraries**:
+     - `WIN32U.DLL`, `GDI32FULL.DLL`: Manage graphical display and UI-related operations.
+     - `UCRTBASE.DLL`: A core system library supporting the C runtime, used by many applications.
+     - **Security-related DLLs**: Libraries such as `RPCRT4.DLL`, `BCRYPTPRIMITIVES.DLL`, `MSVCRT.DLL` were also accessed, indicating potential encryption or secure operations.
+   - **Directory Access**:
+     - Besides system libraries, `SDELETE64.EXE` accessed temporary directories and various system DLLs located under `C:\\WINDOWS\\SYSTEM32`.
+
+#### **Analysis:**
+The use of `SDELETE64.EXE` on the system twice in a short timeframe could suggest the intentional secure deletion of files. Given the timing and the placement of the executable in a temporary directory, this may have been an effort to cover tracks by an attacker. The `SDELETE64.EXE` tool is typically used to overwrite file contents multiple times, making data recovery extremely difficult. This suggests the tool was likely employed to destroy evidence or traces of malicious activity.
+
+**Potential Red Flags or Indicators**:
+- **Execution from TEMP Folder**: Running from a temporary directory is suspicious, as attackers often store tools in such locations to avoid detection.
+- **Secure Deletion**: The presence of `SDELETE64.EXE` strongly implies that the user (or an attacker with access) aimed to erase files securely, which is a common behavior after data exfiltration or other malicious activities.
+
+#### **Conclusion:**
+The analysis of the prefetch file for `SDELETE64.EXE` shows that this tool was used to securely delete files twice on October 9, 2019. Its execution from a temporary directory is suspicious, suggesting that the tool might have been used to cover up illicit activities. The secure deletion of files is a strong indicator that someone may have been trying to destroy critical forensic evidence. Further investigation into network activity, user logs, and file access patterns around the time of these executions is recommended to understand the full scope of the potential compromise.
+
+---
+
+### **Detailed Report on Prefetch Analysis of `PSEXESVC.EXE`**
+
+#### **Artifact Overview:**
+This report provides an analysis of the prefetch file for the executable `PSEXESVC.EXE`, a key component of the PsExec tool, which is commonly used for remote command execution and lateral movement in Windows environments. The prefetch file reveals insights into its execution history, system interactions, and potential malicious activities associated with its use during the investigation.
+
+#### **Executable Overview:**
+- **Executable Name**: `PSEXESVC.EXE`
+- **Hash**: `DB4BBB29`
+- **File Size**: 21,912 bytes
+- **Version**: Windows 10/11 compatible
+- **Run Count**: 2 executions
+- **Last Run Time**: **October 14, 2019, at 04:47:50 AM (UTC)**
+- **Previous Run Time**: **October 14, 2019, at 04:37:20 AM (UTC)**
+- **Source File Path**: `\VOLUME{01d57f73e5f614a0-a2e60e11}\WINDOWS\SYSTEM32\PSEXESVC.EXE`
+
+#### **Key Findings:**
+1. **Execution Timeline**:
+   - `PSEXESVC.EXE` was executed twice, with the first execution occurring at **04:37:20 AM** and the last execution at **04:47:50 AM** on **October 14, 2019**.
+   - This relatively short interval between executions suggests the tool was likely being used for automated or repeated remote command executions during this timeframe, indicating active lateral movement.
+
+2. **Files Accessed During Execution**:
+   - During its execution, `PSEXESVC.EXE` loaded several system-critical DLLs, indicative of its role in facilitating remote system management and execution:
+     - **NTDLL.DLL**: Core Windows API functions.
+     - **KERNEL32.DLL** and **KERNELBASE.DLL**: Essential for memory management and input/output operations.
+     - **USER32.DLL**: Manages user interface services.
+     - **ADVAPI32.DLL**: Provides security-related APIs, including service management and access control.
+     - **MSVCRT.DLL**: Provides standard C runtime functions, critical for application operations.
+     - **RPCRT4.DLL**: Enables Remote Procedure Call (RPC) services, key to PsExec’s remote functionality.
+     - **BCRYPT.DLL**: Provides cryptographic functions, potentially used for securing communications or credential handling.
+
+3. **Directory Access**:
+   - The analysis indicates that `PSEXESVC.EXE` accessed key system directories during its execution, such as:
+     - **C:\Windows\System32**: The core system directory where many essential system files and libraries reside.
+     - **C:\ProgramData\Microsoft\Crypto\RSA**: PsExec may have interacted with cryptographic resources, potentially for establishing secure communication or managing credentials during remote sessions.
+
+4. **Volume Information**:
+   - **Volume Serial Number**: `A2E60E11`
+   - **Volume Path**: `\VOLUME{01d57f73e5f614a0-a2e60e11}\WINDOWS\SYSTEM32`
+   - The execution of `PSEXESVC.EXE` took place on the system’s main volume, which houses the Windows operating system and critical system files.
+
+#### **Analysis**:
+The prefetch analysis confirms that `PSEXESVC.EXE` was executed twice in a short timeframe, aligning with the behavior of PsExec being used for **remote administration** or **lateral movement** across networked systems. The DLLs accessed, such as `RPCRT4.DLL` (related to remote communication), strongly suggest that PsExec was used to remotely execute commands or deploy malicious payloads on target machines.
+
+Given PsExec’s legitimate uses, its presence does not immediately indicate malicious activity. However, in the context of this investigation, the use of PsExec, along with other suspicious activity on the network, suggests that it was likely used to facilitate **lateral movement** by the attacker. Its ability to execute commands without leaving many logs makes it a valuable tool in **post-exploitation** phases.
+
+#### **Potential Red Flags or Indicators**:
+1. **Repeated Executions**: The short time gap between executions points to possible automated or scripted actions.
+2. **RPC and Remote Command Functions**: The loading of `RPCRT4.DLL` and other network-related libraries suggests that PsExec was used for remote command execution or service manipulation.
+3. **Volume Access**: The presence of `PSEXESVC.EXE` in the System32 directory, along with its interaction with cryptographic directories, suggests potential attempts to manage system services or credentials during lateral movement.
+
+#### **Conclusion**:
+The analysis of `PSEXESVC.EXE` indicates its use as part of the attacker’s toolkit to achieve remote command execution on the victim system. The timeline of execution, coupled with the DLLs loaded and directories accessed, suggests that PsExec was employed for lateral movement between compromised systems. Further analysis of network logs, along with other system events, is recommended to confirm the scope of PsExec's usage and its role in the attack.
 
 
