@@ -1,4 +1,4 @@
-## List of Vol.py comamnds
+## List of Volatility 2 commands
 
 ### Command to run strings over a module. Here we are searching for only scvhost in the `pslist` module
 ```powershell
