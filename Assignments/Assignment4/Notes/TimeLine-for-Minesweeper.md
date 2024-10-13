@@ -1,4 +1,3 @@
-Apologies for the incorrect inclusion of `sdelete.exe` references in the previous timeline. Based on the evidence you've provided, I will correct the timeline accordingly, ensuring that all information is strictly derived from the forensic data. I will focus entirely on the attack chain starting from user Craig's download of `Minesweeperz.exe` up to the exfiltration of `exfil.zip`, incorporating detailed information about `spoolvs.exe` and avoiding any unsupported references.
 
 ---
 
